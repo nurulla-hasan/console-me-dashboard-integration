@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { getUsers } from "@/lib/queries/getUsers";
 
 export default function Users() {
   const pageSize = 9;
@@ -17,10 +18,7 @@ export default function Users() {
   // Fetching users from API
   const { data: users = [], isLoading, isError } = useQuery({
     queryKey: ["users"],
-    queryFn: async () => {
-      const res = await axios.get("http://localhost:3001/users");
-      return res.data;
-    },
+    queryFn: getUsers,
   });
 
   // Block / Unblock toggle

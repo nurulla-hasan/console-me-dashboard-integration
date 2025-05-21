@@ -1,22 +1,40 @@
 "use client";
+import { useQuery } from "@tanstack/react-query";
+import { getCategories } from "@/lib/queries/getCategories";
 import Card from "@/components/card/category-card/Card";
 import PageContainer from "@/components/container/PageContainer";
 import CategoryModal from "@/components/modal/category-modal/CategoryModal";
 import Pagination from "@/components/pagination/Pagination";
-import { dummyCategories } from "@/data/data";
 import { useState } from "react";
 import { HiOutlinePlusSm } from "react-icons/hi";
 import { motion } from "framer-motion";
+import {
+    useAddCategory,
+    useUpdateCategory,
+    useDeleteCategory,
+} from "@/hooks/useCategoryMutations";
+import toast from "react-hot-toast";
+import NoData from "@/components/no-data/NoData";
+import Loading from "@/components/loading/Loading";
 
 export default function CategoryManagement() {
-    const [categories, setCategories] = useState(dummyCategories);
+    const { mutate: addCategory } = useAddCategory();
+    const { mutate: updateCategory } = useUpdateCategory();
+    const { mutate: deleteCategory } = useDeleteCategory();
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [categoryName, setCategoryName] = useState("");
     const [categoryIcon, setCategoryIcon] = useState(null);
-    const [editIndex, setEditIndex] = useState(null);
-
+    const [editCategoryId, setEditCategoryId] = useState(null);
     const [page, setPage] = useState(1);
+
+    // Get Categories
+    const { data: categories = [], isLoading, isError } = useQuery({
+        queryKey: ["categories"],
+        queryFn: getCategories,
+    });
+
     const categoriesPerPage = 20;
     const pageCount = Math.ceil(categories.length / categoriesPerPage);
     const paginatedCategories = categories.slice(
@@ -24,57 +42,76 @@ export default function CategoryManagement() {
         page * categoriesPerPage
     );
 
-    const handleAddNew = () => {
+    const handleAddNewModal = () => {
         setEditMode(false);
         setCategoryName("");
         setCategoryIcon(null);
+        setEditCategoryId(null);
         setIsModalOpen(true);
     };
 
-    const handleEdit = (index) => {
-        const globalIndex = (page - 1) * categoriesPerPage + index;
+    // edit
+    const handleEdit = (category) => {
         setEditMode(true);
-        setEditIndex(globalIndex);
-        setCategoryName(categories[globalIndex].name);
-        setCategoryIcon(categories[globalIndex].icon);
+        setEditCategoryId(category.id);
+        setCategoryName(category.name);
+        setCategoryIcon(category.icon);
         setIsModalOpen(true);
     };
 
-    const handleDelete = (index) => {
-        const globalIndex = (page - 1) * categoriesPerPage + index;
-        const updated = [...categories];
-        updated.splice(globalIndex, 1);
-        setCategories(updated);
+    // delete
+    const handleDelete = (category) => {
+        deleteCategory(category.id, {
+            onSuccess: () => toast.success("Category deleted!"),
+            onError: () => toast.error("Failed to delete category"),
+        });
     };
 
     const handleSubmit = () => {
-        if (!categoryName || !categoryIcon) return;
-
-        const newCategory = { name: categoryName, icon: categoryIcon };
-
-        if (editMode) {
-            const updated = [...categories];
-            updated[editIndex] = newCategory;
-            setCategories(updated);
-        } else {
-            setCategories([...categories, newCategory]);
+        if (!categoryName || !categoryIcon) {
+            toast.error("Name and Icon are required");
+            return;
         }
 
-        setIsModalOpen(false);
+        const newCategory = {
+            name: categoryName,
+            icon: categoryIcon,
+        };
+
+        if (editMode && editCategoryId) {
+            updateCategory(
+                { id: editCategoryId, updatedCategory: newCategory },
+                {
+                    onSuccess: () => {
+                        toast.success("Category updated!");
+                        setIsModalOpen(false);
+                    },
+                    onError: () => toast.error("Failed to update category"),
+                }
+            );
+        } else {
+            addCategory(newCategory, {
+                onSuccess: () => {
+                    toast.success("Category added!");
+                    setIsModalOpen(false);
+                },
+                onError: () => toast.error("Failed to add category"),
+            });
+        }
     };
 
     const handleIconUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setCategoryIcon(URL.createObjectURL(file));
+            const tempUrl = URL.createObjectURL(file);
+            setCategoryIcon(tempUrl);
         }
     };
 
     return (
         <PageContainer>
-            {/* Header */}
             <motion.div
-                className="flex justify-between bg-[#f8f8f8] mb-4"
+                className="flex justify-between mb-4"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
@@ -84,14 +121,13 @@ export default function CategoryManagement() {
                 </h1>
                 <button
                     className="bg-teal-500 text-white px-4 py-2 rounded flex items-center gap-1 cursor-pointer"
-                    onClick={handleAddNew}
+                    onClick={handleAddNewModal}
                 >
                     <HiOutlinePlusSm size={20} color="#ffffff" />
                     Add Category
                 </button>
             </motion.div>
 
-            {/* Cards + Pagination Section */}
             <div className="flex flex-col justify-between h-[79vh]">
                 <motion.div
                     className="overflow-auto p-1 scrl-hide grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
@@ -99,23 +135,26 @@ export default function CategoryManagement() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2, duration: 0.5 }}
                 >
-                    {paginatedCategories.length === 0 ? (
+                    {isLoading ? (
+                        <div>Loading</div>
+                    ) : isError ? (
+                        <div>Failed to load categories.</div>
+                    ) : paginatedCategories.length === 0 ? (
                         <div className="col-span-full row-span-full flex justify-center items-center">
-                            <div>No Categories Available</div>
+                            <NoData />
                         </div>
                     ) : (
-                        paginatedCategories.map((cat, idx) => (
+                        paginatedCategories.map((category) => (
                             <motion.div
-                                key={idx}
+                                key={category.id}
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: idx * 0.03 }}
+                                transition={{ delay: 0.03 }}
                             >
                                 <Card
                                     handleEdit={handleEdit}
                                     handleDelete={handleDelete}
-                                    cat={cat}
-                                    idx={idx}
+                                    category={category}
                                 />
                             </motion.div>
                         ))
@@ -123,23 +162,26 @@ export default function CategoryManagement() {
                 </motion.div>
 
                 {/* Pagination */}
-                <motion.div
-                    className="flex justify-evenly items-center text-sm mt-4"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4, duration: 0.4 }}
-                >
-                    <span className="text-[#00A89D]">
-                        Showing {(page - 1) * categoriesPerPage + 1}-{Math.min(page * categoriesPerPage, categories.length)} of {categories.length}
-                    </span>
+                {!isLoading && !isError && (
+                    <motion.div
+                        className="flex justify-evenly items-center text-sm mt-4"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4, duration: 0.4 }}
+                    >
+                        <span className="text-[#00A89D]">
+                            Showing {(page - 1) * categoriesPerPage + 1}-
+                            {Math.min(page * categoriesPerPage, categories.length)} of{" "}
+                            {categories.length}
+                        </span>
 
-                    <div className="flex items-center gap-2">
-                        <Pagination page={page} setPage={setPage} pageCount={pageCount} />
-                    </div>
-                </motion.div>
+                        <div className="flex items-center gap-2">
+                            <Pagination page={page} setPage={setPage} pageCount={pageCount} />
+                        </div>
+                    </motion.div>
+                )}
             </div>
 
-            {/* Modal */}
             <CategoryModal
                 setIsModalOpen={setIsModalOpen}
                 isModalOpen={isModalOpen}

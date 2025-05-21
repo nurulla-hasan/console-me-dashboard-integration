@@ -1,7 +1,6 @@
-import React from 'react';
 import { FaRegImage } from 'react-icons/fa';
 import { MdOutlineArrowBack } from "react-icons/md";
-import { motion, AnimatePresence } from "framer-motion"; // Import Framer Motion components
+import { motion, AnimatePresence } from "framer-motion";
 
 const CategoryModal = ({
     setIsModalOpen,
