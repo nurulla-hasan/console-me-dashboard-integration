@@ -63,7 +63,7 @@ const Page = () => {
                 >
                     <div className='relative'>
                         <Image
-                            src={previewImage}
+                            src={user?.imageUrl || previewImage}
                             width={100}
                             height={100}
                             alt="Profile Picture"

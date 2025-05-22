@@ -1,12 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { use } from 'react';
+import { user } from '@/data/data';
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import { useSelector } from 'react-redux';
 
 const Topbar = ({ isHideLayout }) => {
 
-    const user = useSelector(state => state.auth.user)
+    // const user = useSelector(state => state.auth.user)
 
     return (
         <>
@@ -17,7 +17,7 @@ const Topbar = ({ isHideLayout }) => {
                     </Link>
                 </button>
                 <Image
-                    src="/images/avatar.png"
+                    src={user?.imageUrl}
                     width={40}
                     height={40}
                     alt="User"

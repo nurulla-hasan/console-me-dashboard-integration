@@ -4,7 +4,7 @@ import { IoIosArrowDown, IoIosArrowForward } from 'react-icons/io';
 import { LuSettings } from 'react-icons/lu';
 import { MdOutlineLogout } from 'react-icons/md';
 import { useDispatch } from 'react-redux';
-import { logout } from '@/redux/slice/authSlice';
+import { logout } from '@/redux/slices/authSlice';
 import { useRouter } from 'next/navigation';
 
 const Sidebar = ({ isHideLayout, menuItems, setSettingsOpen, settingsOpen, settingMenu, pathname, }) => {

@@ -55,7 +55,7 @@ export default function RootLayout({ children }) {
 
                 {/* Page content */}
                 <PrivateRoute>
-                  <div className={`font-poppins ${hideRoutes ? "" : "h-[calc(100vh-96px)]"} overflow-y-auto rounded-t-lg bg-[#f8f8f8] `}>
+                  <div className={`font-poppins ${hideRoutes ? "" : "min-h-[calc(100vh-96px)]"} overflow-y-auto rounded-t-lg bg-[#f8f8f8] `}>
                     {children}
                   </div>
                 </PrivateRoute>

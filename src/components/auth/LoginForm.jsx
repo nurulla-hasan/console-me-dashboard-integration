@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { useRouter, useSearchParams } from "next/navigation";
-import { login } from "@/redux/slice/authSlice";
+import { login } from "@/redux/slices/authSlice";
 
 const LoginFormContent = () => {
   const dispatch = useDispatch();
@@ -26,16 +26,15 @@ const LoginFormContent = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    const user = {
-      ...data,
-      name: "Leticia",
-    };
-    dispatch(login(user));
+  const onSubmit = async (data) => {
+  try {
+    const res = await dispatch(login(data)).unwrap();
     toast.success("Login Success!");
     router.push(redirect);
-  };
-
+  } catch (err) {
+    toast.error(err || "Login failed");
+  }
+};
   return (
     <div className="flex items-center justify-center min-h-screen p-3 text-white">
       <div className="border bg-[#FEFEFE] p-14 rounded-2xl w-full max-w-md">
