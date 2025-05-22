@@ -1,10 +1,16 @@
-// "use client";
 
-// import Lottie from "lottie-react";
-// import loadingAnimation from './../../lotties/loading.json';
 
-// const Loading = () => {
-//   return <Lottie animationData={loadingAnimation} loop={true} />;
-// };
+const Loading = () => {
+    return (
+        <div className="flex justify-center items-center min-h-[70vh]">
+            <div className="relative inline-block w-20 h-20 text-teal-500">
+                <div className="absolute box-border w-16 h-16 m-2 border-8 border-t-transparent border-r-transparent border-current rounded-full animate-spin [animation-delay:-0.45s]" />
+                <div className="absolute box-border w-16 h-16 m-2 border-8 border-t-transparent border-r-transparent border-current rounded-full animate-spin [animation-delay:-0.3s]" />
+                <div className="absolute box-border w-16 h-16 m-2 border-8 border-t-transparent border-r-transparent border-current rounded-full animate-spin [animation-delay:-0.15s]" />
+                <div className="absolute box-border w-16 h-16 m-2 border-8 border-t-transparent border-r-transparent border-current rounded-full animate-spin" />
+            </div>
+        </div>
+    );
+};
 
-// export default Loading;
+export default Loading;

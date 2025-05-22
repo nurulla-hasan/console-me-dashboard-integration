@@ -1,6 +1,5 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { getCategories } from "@/lib/queries/getCategories";
 import Card from "@/components/card/category-card/Card";
 import PageContainer from "@/components/container/PageContainer";
 import CategoryModal from "@/components/modal/category-modal/CategoryModal";
@@ -16,6 +15,7 @@ import {
 import toast from "react-hot-toast";
 import NoData from "@/components/no-data/NoData";
 import Loading from "@/components/loading/Loading";
+import { getCategories } from "@/lib/queries/getCategories";
 
 export default function CategoryManagement() {
     const { mutate: addCategory } = useAddCategory();
@@ -136,7 +136,7 @@ export default function CategoryManagement() {
                     transition={{ delay: 0.2, duration: 0.5 }}
                 >
                     {isLoading ? (
-                        <div>Loading</div>
+                        <Loading />
                     ) : isError ? (
                         <div>Failed to load categories.</div>
                     ) : paginatedCategories.length === 0 ? (

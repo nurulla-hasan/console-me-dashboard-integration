@@ -1,21 +1,24 @@
 "use client";
+
 import PageContainer from "@/components/container/PageContainer";
 import ConsultantModal from "@/components/modal/consultant-modal/ConsultantModal";
 import Pagination from "@/components/pagination/Pagination";
 import ConsultTable from "@/components/table/consult-table/ConsultTable";
-import { consult } from "@/data/data";
 import { useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { motion } from "framer-motion";
-
+import { useConsultants } from "@/hooks/useConsultants";
+import Loading from "@/components/loading/Loading";
+import NoData from "@/components/no-data/NoData";
 
 export default function Consults() {
-  const pageSize = 8;
+  const pageSize = 10;
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
-  const [data, setData] = useState(consult);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
+
+  const { data, isLoading, isError } = useConsultants({ page, search: query });
 
   const handleModalOpen = (user) => {
     setSelectedUser(user);
@@ -23,11 +26,7 @@ export default function Consults() {
   };
 
   const handleAccept = () => {
-    setData((prev) =>
-      prev.map((u) =>
-        u.id === selectedUser.id ? { ...u, verified: true } : u
-      )
-    );
+    // optionally: call mutation here to mark verified
     setShowModal(false);
   };
 
@@ -35,11 +34,9 @@ export default function Consults() {
     setShowModal(false);
   };
 
-  const filtered = data.filter((u) =>
-    u.name.toLowerCase().includes(query.toLowerCase())
-  );
-  const pageCount = Math.ceil(filtered.length / pageSize);
-  const paged = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const consultants = data?.consultants || [];
+  const total = data?.totalConsultants || 0;
+  const pageCount = data?.totalPages || 1;
 
   return (
     <PageContainer>
@@ -72,10 +69,18 @@ export default function Consults() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        <ConsultTable paged={paged} handleModalOpen={handleModalOpen} />
+        {isLoading ? (
+          <Loading />
+        ) : isError ? (
+          <div className="text-center text-red-500 py-10">Failed to load data</div>
+        ) : consultants.length === 0 ? (
+          <NoData />
+        ) : (
+          <ConsultTable paged={consultants} handleModalOpen={handleModalOpen} />
+        )}
       </motion.div>
 
-      {/* Modal */}
+      {/* Modal ----------------------------------------------------------*/}
       <ConsultantModal
         showModal={showModal}
         selectedUser={selectedUser}
@@ -84,19 +89,21 @@ export default function Consults() {
       />
 
       {/* pagination */}
-      <motion.div
-        className="flex justify-evenly items-center text-sm mt-4"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4, duration: 0.4 }}
-      >
-        <span className="text-[#00A89D]">
-          Showing {(page - 1) * pageSize + 1}-{Math.min(page * pageSize, filtered.length)} of {filtered.length}
-        </span>
-        <div className="flex items-center gap-2">
-          <Pagination page={page} setPage={setPage} pageCount={pageCount} />
-        </div>
-      </motion.div>
+      {!isLoading && consultants.length > 0 && (
+        <motion.div
+          className="flex justify-evenly items-center text-sm mt-4"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.4 }}
+        >
+          <span className="text-[#00A89D]">
+            Showing {(page - 1) * pageSize + 1}-{Math.min(page * pageSize, total)} of {total}
+          </span>
+          <div className="flex items-center gap-2">
+            <Pagination page={page} setPage={setPage} pageCount={pageCount} />
+          </div>
+        </motion.div>
+      )}
     </PageContainer>
   );
 }

@@ -5,11 +5,10 @@ import UserTable from "@/components/table/user-table/UserTable";
 import { useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { motion } from "framer-motion";
-import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import { getUsers } from "@/lib/queries/getUsers";
-import { blockUser } from "@/lib/queries/blockUser";
 import { useBlockUser } from "@/hooks/useBlockUser";
+import Loading from "@/components/loading/Loading";
 
 export default function Users() {
   const [query, setQuery] = useState("");
@@ -30,7 +29,7 @@ export default function Users() {
   const { users, totalUsers, totalPages } = data;
 
 
-// Toggle User
+  // Toggle User Block and Unblock
   const { mutate: handleBlock, isPending } = useBlockUser();
   const onBlockClick = (id) => {
     handleBlock(id);
@@ -68,7 +67,7 @@ export default function Users() {
         transition={{ delay: 0.2, duration: 0.5 }}
       >
         {isLoading ? (
-          <div className="text-center p-10 text-gray-500">Loading users...</div>
+          <Loading />
         ) : isError ? (
           <div className="text-center p-10 text-red-500">Failed to load users.</div>
         ) : (

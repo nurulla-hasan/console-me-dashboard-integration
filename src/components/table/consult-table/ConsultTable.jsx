@@ -17,10 +17,10 @@ const ConsultTable = ({ paged, handleModalOpen }) => {
                 </thead>
                 <tbody>
                     {paged?.map((user) => (
-                        <tr key={user.id} className={`odd:bg-gray-50`}>
-                            <td className="px-4 py-3">{user.id}</td>
+                        <tr key={user._id} className={`odd:bg-gray-50 hover:bg-teal-50`}>
+                            <td className="px-4 py-3">{user._id}</td>
                             <td className="px-4 py-3 flex items-center gap-2">
-                                <img src={user.avatar} alt="" className="w-9 h-9 rounded-full" />
+                                <img src={user.photo_url} alt="" className="w-9 h-9 rounded-full" />
                                 {user.name}
                             </td>
                             <td className="px-4 py-3">{user.service}</td>
@@ -29,14 +29,14 @@ const ConsultTable = ({ paged, handleModalOpen }) => {
                             <td className="px-4 py-3">{user.location}</td>
                             <td className="px-4 py-3 flex justify-center">
                                 <button
-                                    disabled={user.verified}
+                                    disabled={user.account_status}
                                     onClick={() => handleModalOpen(user)}
-                                    className={`w-22 py-2 flex items-center justify-center rounded cursor-pointer transition-all duration-300 ${!user.verified
+                                    className={`w-22 py-2 flex items-center justify-center rounded cursor-pointer transition-all duration-300 ${!user.account_status
                                         ? " bg-red-100 text-red-500 hover:bg-red-200 hover:text-red-600 border border-red-300"
                                         : "bg-green-100 text-green-700 hover:bg-green-200 disabled:cursor-not-allowed border border-green-300"
                                         }`}
                                 >
-                                    {!user.verified ? "Unverified" : "Verified"}
+                                    {!user.account_status ? "Unverified" : "Verified"}
                                 </button>
                             </td>
                         </tr>

@@ -1,5 +1,5 @@
 "use client";
-import { blockUser } from "@/lib/queries/blockUser";
+import { blockUser } from "@/lib/mutations/blockUser";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
