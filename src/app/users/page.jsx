@@ -71,7 +71,7 @@ export default function Users() {
         ) : isError ? (
           <div className="text-center p-10 text-red-500">Failed to load users.</div>
         ) : (
-          <UserTable users={users} handleBlock={onBlockClick} />
+          <UserTable users={users} onBlockClick={onBlockClick} />
         )}
       </motion.div>
 

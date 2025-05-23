@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { useConsultants } from "@/hooks/useConsultants";
 import Loading from "@/components/loading/Loading";
 import NoData from "@/components/no-data/NoData";
+import { useBlockConsult } from "@/hooks/useBlockConsult";
 
 export default function Consults() {
   const pageSize = 10;
@@ -25,10 +26,15 @@ export default function Consults() {
     setShowModal(true);
   };
 
-  const handleAccept = () => {
-    // optionally: call mutation here to mark verified
-    setShowModal(false);
-  };
+  // const handleAccept = (id) => {
+  //   setShowModal(false);
+  // };
+
+  const { mutate: handleAccept, isPending } = useBlockConsult();
+    const onBlockClick = (id) => {
+      handleAccept(id);
+      setShowModal(false);
+    };
 
   const handleReject = () => {
     setShowModal(false);
@@ -85,7 +91,7 @@ export default function Consults() {
         showModal={showModal}
         selectedUser={selectedUser}
         handleReject={handleReject}
-        handleAccept={handleAccept}
+        handleAccept={onBlockClick}
       />
 
       {/* pagination */}

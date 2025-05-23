@@ -13,24 +13,24 @@ const ConsultantModal = ({ showModal, selectedUser, handleReject, handleAccept }
           transition={{ duration: 0.1 }}
         >
           <motion.div
-            className="bg-white rounded-xl w-[500px] p-4"
+            className="bg-white rounded-xl max-w-lg p-4"
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0.8 }}
             transition={{ duration: 0.1 }}
           >
             {/* Header */}
-            <div className="bg-[#00a89dbc] rounded-xl h-52 flex flex-col justify-center items-center gap-2 mb-4">
-              <Image
-                src={selectedUser?.photo_url || "/placeholder.jpg"}
-                width={100}
-                height={100}
-                alt="avatar"
-                className="rounded-full w-20 h-20"
-              />
+            <div className="bg-[#00a89dbc] rounded-xl flex flex-col justify-center items-center gap-2 mb-4 p-4">
+                <Image
+                  src={selectedUser?.photo_url || "/placeholder.jpg"}
+                  width={500}
+                  height={500}
+                  alt="avatar"
+                  className="rounded-full w-20 h-20"
+                />
               <div className="text-white text-center">
-                <h1 className="font-medium text-2xl">{selectedUser.name}</h1>
-                <p>Consultant</p>
+                <h1 className="font-medium text-2xl">{selectedUser?.name}</h1>
+                <p className="text-sm mt-2 text-gray-200">{selectedUser?.about}</p>
               </div>
             </div>
 
@@ -39,32 +39,32 @@ const ConsultantModal = ({ showModal, selectedUser, handleReject, handleAccept }
               <div className="space-y-4 text-sm">
                 <div>
                   <h3 className="font-medium">Name</h3>
-                  <p>{selectedUser.name}</p>
+                  <p>{selectedUser?.name}</p>
                 </div>
                 <div>
                   <h3 className="font-medium">Phone</h3>
-                  <p>{selectedUser.phone}</p>
+                  <p>{selectedUser?.phone}</p>
                 </div>
                 <div>
                   <h3 className="font-medium">Location</h3>
-                  <p>{`${selectedUser.city}, ${selectedUser.country}`}</p>
+                  <p>{`${selectedUser?.city}, ${selectedUser?.country}`}</p>
                 </div>
               </div>
               <div className="space-y-4 text-sm">
                 <div>
                   <h3 className="font-medium">Email</h3>
-                  <p>{selectedUser.email}</p>
+                  <p>{selectedUser?.email}</p>
                 </div>
                 <div>
                   <h3 className="font-medium">Service ID</h3>
-                  <p>{selectedUser.service}</p>
-                  {/* 🔁 তুমি চাইলে এখানে service নাম fetch করে দেখাতে পারো */}
+                  <p>{selectedUser?.service}</p>
+                  {/* You can fetch service name here */}
                 </div>
               </div>
             </div>
 
             {/* Optional: NID & Licence */}
-            {(selectedUser.nid || selectedUser.licence) && (
+            {(selectedUser?.nid || selectedUser?.licence) && (
               <div className="mb-10 px-6">
                 <h3 className="font-medium mb-2">NID & Licence</h3>
                 <div className="flex gap-3">
@@ -94,13 +94,13 @@ const ConsultantModal = ({ showModal, selectedUser, handleReject, handleAccept }
             <div className="flex justify-between gap-8 px-6">
               <button
                 onClick={handleReject}
-                className="border text-black py-2 w-full rounded-md"
+                className="border text-black py-2 w-full rounded-md cursor-pointer"
               >
                 Decline
               </button>
               <button
-                onClick={handleAccept}
-                className="bg-teal-600 text-white py-2 w-full rounded-md"
+                onClick={()=>handleAccept(selectedUser?._id)}
+                className="bg-teal-600 text-white py-2 w-full rounded-md cursor-pointer"
               >
                 Accept
               </button>
