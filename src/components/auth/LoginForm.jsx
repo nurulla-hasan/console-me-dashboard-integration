@@ -1,5 +1,4 @@
 "use client";
-
 import { Suspense } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -9,7 +8,7 @@ import toast from "react-hot-toast";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { useRouter, useSearchParams } from "next/navigation";
-import { login } from "@/redux/slices/authSlice";
+import { getUserProfile, login } from "@/lib/api/auth";
 
 const LoginFormContent = () => {
   const dispatch = useDispatch();
@@ -26,15 +25,36 @@ const LoginFormContent = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data) => {
-  try {
-    const res = await dispatch(login(data)).unwrap();
-    toast.success("Login Success!");
-    router.push(redirect);
-  } catch (err) {
-    toast.error(err || "Login failed");
-  }
-};
+  const onSubmit = async (formData) => {
+    try {
+      // 1. Login request
+      const res = await login(formData);
+      const { accessToken, refreshToken, profile_id } = res.data;
+
+      // 2. Save tokens in localStorage
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+
+      // 3. Fetch user profile
+      const profileRes = await getUserProfile(profile_id);
+
+      // 4. Set user in Redux
+      dispatch(setCredentials({
+        user: profileRes.data,
+        accessToken,
+        refreshToken,
+      }));
+
+      toast.success("Login successful!");
+      // 5. Redirect
+      router.push(redirect);
+    } catch (error) {
+      toast.error(error.message);
+      console.log(error)
+    }
+  };
+
+
   return (
     <div className="flex items-center justify-center min-h-screen p-3 text-white">
       <div className="border bg-[#FEFEFE] p-14 rounded-2xl w-full max-w-md">
@@ -50,9 +70,8 @@ const LoginFormContent = () => {
               id="email"
               type="email"
               placeholder="Enter your email"
-              className={`w-full px-3 py-2 border  text-[#5C5C5C] text-xs bg-white rounded-sm ${
-                errors.email ? "border-red-500" : "border-[#00A89D]"
-              } focus:outline-none cursor-pointer`}
+              className={`w-full px-3 py-2 border  text-[#5C5C5C] text-xs bg-white rounded-sm ${errors.email ? "border-red-500" : "border-[#00A89D]"
+                } focus:outline-none cursor-pointer`}
               {...register("email", {
                 required: "Email is required",
                 pattern: {
@@ -73,9 +92,8 @@ const LoginFormContent = () => {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="********"
-                className={`w-full px-3 py-2 border text-[#5C5C5C] text-xs bg-white rounded-sm ${
-                  errors.password ? "border-red-500" : "border-[#00A89D]"
-                } focus:outline-none cursor-pointer`}
+                className={`w-full px-3 py-2 border text-[#5C5C5C] text-xs bg-white rounded-sm ${errors.password ? "border-red-500" : "border-[#00A89D]"
+                  } focus:outline-none cursor-pointer`}
                 {...register("password", {
                   required: "Password is required",
                 })}

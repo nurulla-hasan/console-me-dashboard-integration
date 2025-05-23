@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { forgotPassword } from "@/lib/api/auth";
+import toast from "react-hot-toast";
 
 const ForgotPasswordForm = () => {
   const router = useRouter();
@@ -15,13 +17,21 @@ const ForgotPasswordForm = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    setIsSubmitting(true);
-    console.log("Forgot password request for:", data.email);
+    try {
 
-    setTimeout(() => {
-      setIsSubmitting(false);
+      setIsSubmitting(true);
+      // Call the forgot password API
+      await forgotPassword({ email: data.email });
+      toast.success("Verification code sent to your email");
+      localStorage.setItem("resetEmail", data.email);
+      // Redirect user to verify email page
       router.push("/auth/verify-email");
-    }, 1000);
+    } catch (error) {
+      toast.error(error.message);
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -42,9 +52,8 @@ const ForgotPasswordForm = () => {
               id="email"
               type="email"
               placeholder="Enter your email"
-              className={`w-full px-3 py-2 border text-[#5C5C5C] text-xs bg-white rounded-sm ${
-                errors.email ? "border-red-500" : "border-[#00A89D]"
-              } focus:outline-none cursor-pointer`}
+              className={`w-full px-3 py-2 border text-[#5C5C5C] text-xs bg-white rounded-sm ${errors.email ? "border-red-500" : "border-[#00A89D]"
+                } focus:outline-none cursor-pointer`}
               {...register("email", {
                 required: "Email is required",
                 pattern: {

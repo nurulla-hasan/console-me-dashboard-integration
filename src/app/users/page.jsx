@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUsers } from "@/lib/queries/getUsers";
 import { useBlockUser } from "@/hooks/useBlockUser";
 import Loading from "@/components/loading/Loading";
+import Error from "@/components/error/Error";
 
 export default function Users() {
   const [query, setQuery] = useState("");
@@ -69,7 +70,7 @@ export default function Users() {
         {isLoading ? (
           <Loading />
         ) : isError ? (
-          <div className="text-center p-10 text-red-500">Failed to load users.</div>
+          <Error itemName='users'/>
         ) : (
           <UserTable users={users} onBlockClick={onBlockClick} />
         )}

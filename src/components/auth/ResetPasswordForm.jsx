@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { PiEyeLight } from "react-icons/pi";
 import { PiEyeSlash } from "react-icons/pi";
+import { resetPassword } from "@/lib/api/auth";
+import toast from "react-hot-toast";
 
 const ResetPasswordForm = () => {
   const router = useRouter();
@@ -21,14 +23,34 @@ const ResetPasswordForm = () => {
 
   const password = watch("password", "");
 
+  // Submit
   const onSubmit = async (data) => {
     setIsSubmitting(true);
-    console.log("Reset password with:", data);
 
-    setTimeout(() => {
+    try {
+      const email = localStorage.getItem("resetEmail");
+      if (!email) {
+        toast.error("No email found.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const payload = {
+        email,
+        password: data.password,
+      };
+
+      await resetPassword(payload);
+
+      toast.success("Password reset successfully!");
+      router.push("/auth/login");
+    } catch (error) {
+      console.error(error);
+      const msg = error?.response?.data?.message || "Failed to reset password.";
+      toast.error(msg);
+    } finally {
       setIsSubmitting(false);
-      router.push("/");
-    }, 1500);
+    }
   };
 
   return (

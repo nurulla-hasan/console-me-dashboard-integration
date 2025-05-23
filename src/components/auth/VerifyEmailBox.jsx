@@ -1,6 +1,8 @@
 "use client";
+import { forgotPassword, verifyOtp } from "@/lib/api/auth";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
+import toast from "react-hot-toast";
 
 const VerifyEmailForm = () => {
   const router = useRouter()
@@ -36,25 +38,63 @@ const VerifyEmailForm = () => {
     if (/^\d{6}$/.test(pastedData)) {
       const newCode = pastedData.split("");
       setCode(newCode);
-      inputRefs.current[4]?.focus();
+      inputRefs.current[5]?.focus();
     }
   };
 
-  const handleSubmit = (e) => {
+  // Submit OTP
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (code.join("").length !== 6) return;
 
     setIsSubmitting(true);
-    console.log("Verifying code:", code.join(""));
 
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const email = localStorage.getItem("resetEmail");
+      if (!email) {
+        toast.error("No email found.");
+        return;
+      }
+
+      const otpCode = code.join("");
+      const res = await verifyOtp({ email, otp: otpCode });
+      // const reset_token = res.data.token;
+      // localStorage.setItem("resetToken", reset_token);
+
+      toast.success("OTP verified!");
       router.push("/auth/reset-password");
-    }, 1600);
+    } catch (error) {
+      console.error(error);
+      if (error.message === "Network Error") {
+        toast.error("Network Error");
+      } else {
+        const msg = error?.response?.data?.message || "Invalid OTP";
+        toast.error(msg);
+      }
+
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleResend = () => {
-    console.log("Resending verification code");
+  // Resend OTP
+  const handleResend = async () => {
+    try {
+      setIsSubmitting(true);
+      const email = localStorage.getItem("resetEmail");
+      if (!email) {
+        toast.error("No email found to resend verification.");
+        return;
+      }
+
+      await forgotPassword({ email });
+      toast.success("Verification code resent!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to resend code!");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

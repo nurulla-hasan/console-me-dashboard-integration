@@ -1,19 +1,7 @@
-import axios from "axios";
-
-const TOKEN = process.env.NEXT_PUBLIC_BEARER_TOKEN;
-
-export const getUsers = async (pageNumber = 1, query) => {
-  console.log(query)
+import { api } from "../api/axiosInstance";
+export const getUsers = async (pageNumber = 1, query = '') => {
   try {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/admin/users?page=${pageNumber}&limit=10&search=${query}`,
-      {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const res = await api.get(`/admin/users?page=${pageNumber}&limit=10&search=${query}`,);
 
     const { data, meta } = res.data;
 

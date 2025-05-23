@@ -16,6 +16,7 @@ import toast from "react-hot-toast";
 import NoData from "@/components/no-data/NoData";
 import Loading from "@/components/loading/Loading";
 import { getCategories } from "@/lib/queries/getCategories";
+import Error from "@/components/error/Error";
 
 export default function CategoryManagement() {
     const { mutate: addCategory } = useAddCategory();
@@ -42,6 +43,8 @@ export default function CategoryManagement() {
         page * categoriesPerPage
     );
 
+
+    // Add
     const handleAddNewModal = () => {
         setEditMode(false);
         setCategoryName("");
@@ -129,22 +132,26 @@ export default function CategoryManagement() {
             </motion.div>
 
             <div className="flex flex-col justify-between h-[79vh]">
-                <motion.div
-                    className="overflow-auto p-1 scrl-hide grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2, duration: 0.5 }}
-                >
-                    {isLoading ? (
-                        <Loading />
-                    ) : isError ? (
-                        <div>Failed to load categories.</div>
-                    ) : paginatedCategories.length === 0 ? (
-                        <div className="col-span-full row-span-full flex justify-center items-center">
-                            <NoData />
-                        </div>
-                    ) : (
-                        paginatedCategories.map((category) => (
+                {/* Loader / Error / No Data */}
+                {isLoading ? (
+                    <Loading />
+                ) : isError ? (
+                    <Error itemName={'categories'} />
+                ) : paginatedCategories.length === 0 ? (
+                    <div className="mb-4">
+                        <NoData />
+                    </div>
+                ) : null}
+
+                {/* Category Grid */}
+                {!isLoading && !isError && paginatedCategories.length > 0 && (
+                    <motion.div
+                        className="overflow-auto p-1 scrl-hide grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.2, duration: 0.5 }}
+                    >
+                        {paginatedCategories.map((category) => (
                             <motion.div
                                 key={category.id}
                                 initial={{ opacity: 0, scale: 0.95 }}
@@ -157,9 +164,9 @@ export default function CategoryManagement() {
                                     category={category}
                                 />
                             </motion.div>
-                        ))
-                    )}
-                </motion.div>
+                        ))}
+                    </motion.div>
+                )}
 
                 {/* Pagination */}
                 {!isLoading && !isError && (

@@ -11,6 +11,7 @@ import { useConsultants } from "@/hooks/useConsultants";
 import Loading from "@/components/loading/Loading";
 import NoData from "@/components/no-data/NoData";
 import { useBlockConsult } from "@/hooks/useBlockConsult";
+import Error from "@/components/error/Error";
 
 export default function Consults() {
   const pageSize = 10;
@@ -78,7 +79,7 @@ export default function Consults() {
         {isLoading ? (
           <Loading />
         ) : isError ? (
-          <div className="text-center text-red-500 py-10">Failed to load data</div>
+          <Error itemName='consult'/>
         ) : consultants.length === 0 ? (
           <NoData />
         ) : (

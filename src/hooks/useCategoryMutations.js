@@ -1,3 +1,4 @@
+import { api } from "@/lib/api/axiosInstance";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -7,7 +8,7 @@ export const useAddCategory = () => {
 
     return useMutation({
         mutationFn: async (newCategory) => {
-            const res = await axios.post("http://localhost:3001/categories", newCategory);
+            const res = await api.post("/admin/category/add", newCategory);
             return res.data;
         },
         onSuccess: () => {
@@ -22,7 +23,7 @@ export const useUpdateCategory = () => {
 
     return useMutation({
         mutationFn: async ({ id, updatedCategory }) => {
-            const res = await axios.put(`http://localhost:3001/categories/${id}`, updatedCategory);
+            const res = await api.put(`/admin/category/update?id=${id}`, updatedCategory);
             return res.data;
         },
         onSuccess: () => {
@@ -37,7 +38,7 @@ export const useDeleteCategory = () => {
 
     return useMutation({
         mutationFn: async (id) => {
-            const res = await axios.delete(`http://localhost:3001/categories/${id}`);
+            const res = await api.delete(`/admin/category/delete?id=${id}`);
             return res.data;
         },
         onSuccess: () => {
