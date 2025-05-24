@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getUserProfile, login } from "@/lib/api/auth";
+import { setCredentials } from "@/redux/slices/authSlice";
 
 const LoginFormContent = () => {
   const dispatch = useDispatch();
@@ -25,18 +26,21 @@ const LoginFormContent = () => {
     formState: { errors },
   } = useForm();
 
+
+  const id = "68308409e557e6521378c035"
+
   const onSubmit = async (formData) => {
     try {
       // 1. Login request
       const res = await login(formData);
-      const { accessToken, refreshToken, profile_id } = res.data;
+      const { accessToken, refreshToken } = res.data;
 
       // 2. Save tokens in localStorage
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
 
       // 3. Fetch user profile
-      const profileRes = await getUserProfile(profile_id);
+      const profileRes = await getUserProfile(id);
 
       // 4. Set user in Redux
       dispatch(setCredentials({

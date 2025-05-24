@@ -6,12 +6,12 @@ import toast from "react-hot-toast";
 
 const VerifyEmailForm = () => {
   const router = useRouter()
-  const [code, setCode] = useState(["", "", "", "", "", ""]);
+  const [code, setCode] = useState(["", "", "", ""]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const inputRefs = useRef([]);
 
   useEffect(() => {
-    inputRefs.current = inputRefs.current.slice(0, 6);
+    inputRefs.current = inputRefs.current.slice(0, 4);
   }, []);
 
   const handleChange = (index, value) => {
@@ -38,14 +38,14 @@ const VerifyEmailForm = () => {
     if (/^\d{6}$/.test(pastedData)) {
       const newCode = pastedData.split("");
       setCode(newCode);
-      inputRefs.current[5]?.focus();
+      inputRefs.current[3]?.focus();
     }
   };
 
   // Submit OTP
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (code.join("").length !== 6) return;
+    if (code.join("").length !== 4) return;
 
     setIsSubmitting(true);
 
@@ -58,8 +58,8 @@ const VerifyEmailForm = () => {
 
       const otpCode = code.join("");
       const res = await verifyOtp({ email, otp: otpCode });
-      // const reset_token = res.data.token;
-      // localStorage.setItem("resetToken", reset_token);
+      const pass_reset_token = res?.data?.passwordResetToken;
+      localStorage.setItem("passwordResetToken", pass_reset_token);
 
       toast.success("OTP verified!");
       router.push("/auth/reset-password");
@@ -126,7 +126,7 @@ const VerifyEmailForm = () => {
 
           <button
             type="submit"
-            disabled={isSubmitting || code.join("").length !== 6}
+            disabled={isSubmitting || code.join("").length !== 4}
             className="w-full bg-[#00A89D] border border-gray-400 disabled:cursor-not-allowed text-white py-2 text-xs px-4  hover:bg-[#428a86] transition duration-200 cursor-pointer disabled:opacity-70"
           >
             {isSubmitting ? "Verifying..." : "Verify"}

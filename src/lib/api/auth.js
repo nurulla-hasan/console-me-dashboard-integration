@@ -19,4 +19,4 @@ export const resetPassword = (data) => api.post("/auth/reset-password", data);
 export const refreshToken = (data) => api.post("/auth/refresh-token", data);
 
 // get profile
-export const getUserProfile = (profile_id) => api.get(`/profile?profile_id=${profile_id}`);
+export const getUserProfile = (_id) => api.get(`/profile?profile_id=${_id}`);

@@ -29,6 +29,7 @@ const ResetPasswordForm = () => {
 
     try {
       const email = localStorage.getItem("resetEmail");
+      const token = localStorage.getItem("passwordResetToken");
       if (!email) {
         toast.error("No email found.");
         setIsSubmitting(false);
@@ -38,6 +39,7 @@ const ResetPasswordForm = () => {
       const payload = {
         email,
         password: data.password,
+        token
       };
 
       await resetPassword(payload);
