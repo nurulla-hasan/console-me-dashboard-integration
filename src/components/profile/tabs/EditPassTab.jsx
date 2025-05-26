@@ -1,13 +1,22 @@
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
-const EditPassTab = ({ activeTab, handleSubmit, onSubmitPassword, register }) => {
-
+const EditPassTab = ({ activeTab, onSubmitPassword }) => {
     const [showPassword, setShowPassword] = useState({
         current: false,
         new: false,
         confirm: false,
     });
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        watch,
+        reset
+    } = useForm();
+
     const toggleShow = (key) => {
         setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
     };
@@ -23,7 +32,9 @@ const EditPassTab = ({ activeTab, handleSubmit, onSubmitPassword, register }) =>
                         <label className="block mb-1 font-medium">Current Password</label>
                         <input
                             type={showPassword.current ? "text" : "password"}
-                            {...register('currentPassword')}
+                            {...register('currentPassword', {
+                                required: 'Current password is required',
+                            })}
                             className="w-full border border-teal-400 rounded-md p-2 pr-10 outline-none"
                         />
                         <span
@@ -32,6 +43,7 @@ const EditPassTab = ({ activeTab, handleSubmit, onSubmitPassword, register }) =>
                         >
                             {showPassword.current ? <FiEyeOff color="#1ac0b896" size={20}/> : <FiEye color="#1ac0b896" size={20}/>}
                         </span>
+                        {errors.currentPassword && <p className="text-red-500 text-sm mt-1">{errors.currentPassword.message}</p>}
                     </div>
 
                     {/* New Password */}
@@ -39,7 +51,13 @@ const EditPassTab = ({ activeTab, handleSubmit, onSubmitPassword, register }) =>
                         <label className="block mb-1 font-medium">New Password</label>
                         <input
                             type={showPassword.new ? "text" : "password"}
-                            {...register('newPassword')}
+                            {...register('newPassword', {
+                                required: 'New password is required',
+                                minLength: {
+                                    value: 6,
+                                    message: 'Password must be at least 6 characters',
+                                },
+                            })}
                             className="w-full border border-teal-400 rounded-md p-2 pr-10 outline-none"
                         />
                         <span
@@ -48,6 +66,7 @@ const EditPassTab = ({ activeTab, handleSubmit, onSubmitPassword, register }) =>
                         >
                             {showPassword.new ? <FiEyeOff color="#1ac0b896" size={20}/> : <FiEye color="#1ac0b896" size={20}/>}
                         </span>
+                        {errors.newPassword && <p className="text-red-500 text-sm mt-1">{errors.newPassword.message}</p>}
                     </div>
 
                     {/* Confirm New Password */}
@@ -55,7 +74,11 @@ const EditPassTab = ({ activeTab, handleSubmit, onSubmitPassword, register }) =>
                         <label className="block mb-1 font-medium">Confirm New Password</label>
                         <input
                             type={showPassword.confirm ? "text" : "password"}
-                            {...register('confirmPassword')}
+                            {...register('confirmPassword', {
+                                required: 'Please confirm your new password',
+                                validate: value =>
+                                    value === watch('newPassword') || 'Passwords do not match',
+                            })}
                             className="w-full border border-teal-400 rounded-md p-2 pr-10 outline-none"
                         />
                         <span
@@ -64,6 +87,7 @@ const EditPassTab = ({ activeTab, handleSubmit, onSubmitPassword, register }) =>
                         >
                             {showPassword.confirm ? <FiEyeOff color="#1ac0b896" size={20}/> : <FiEye color="#1ac0b896" size={20}/>}
                         </span>
+                        {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>}
                     </div>
 
                     <div className='w-full text-center'>

@@ -54,11 +54,11 @@ export default function RootLayout({ children }) {
                 <Topbar isHideLayout={isHideLayout} />
 
                 {/* Page content */}
-                <PrivateRoute>
+                {/* <PrivateRoute> */}
                   <div className={`font-poppins ${hideRoutes ? "" : "min-h-[calc(100vh-96px)]"} overflow-y-auto rounded-t-lg bg-[#f8f8f8] `}>
                     {children}
                   </div>
-                </PrivateRoute>
+                {/* </PrivateRoute> */}
               </main>
             </div>
           </QueryClientProvider>

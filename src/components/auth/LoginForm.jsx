@@ -4,15 +4,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PiEyeLight } from "react-icons/pi";
 import { PiEyeSlash } from "react-icons/pi";
-import toast from "react-hot-toast";
 import Link from "next/link";
-import { useDispatch } from "react-redux";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getUserProfile, login } from "@/lib/api/auth";
-import { setCredentials } from "@/redux/slices/authSlice";
+import { login } from "@/lib/api/auth";
+import { ErrorToast, SuccessToast } from "@/utils/ValidationToast";
 
 const LoginFormContent = () => {
-  const dispatch = useDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/";
@@ -27,34 +24,33 @@ const LoginFormContent = () => {
   } = useForm();
 
 
-  const id = "68308409e557e6521378c035"
-
   const onSubmit = async (formData) => {
     try {
       // 1. Login request
       const res = await login(formData);
-      const { accessToken, refreshToken } = res.data;
+      const { accessToken, refreshToken, message } = res.data;
 
       // 2. Save tokens in localStorage
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
+      SuccessToast(message);
 
-      // 3. Fetch user profile
-      const profileRes = await getUserProfile(id);
-
-      // 4. Set user in Redux
-      dispatch(setCredentials({
-        user: profileRes.data,
-        accessToken,
-        refreshToken,
-      }));
-
-      toast.success("Login successful!");
       // 5. Redirect
       router.push(redirect);
+      
     } catch (error) {
-      toast.error(error.message);
-      console.log(error)
+      const message = error?.response?.data?.message;
+      if (!message) {
+        ErrorToast("Something Went Wrong");
+        return;
+      }
+      const knownErrors = {
+        "User not found": "Couldn't find your email address",
+        "Invalid password": "Wrong Password",
+        "User is banned": "You Are Banned",
+      };
+
+      ErrorToast(knownErrors[message] || "Something Went Wrong");
     }
   };
 

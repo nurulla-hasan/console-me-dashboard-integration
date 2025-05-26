@@ -1,6 +1,5 @@
 "use client";
 import PageContainer from '@/components/container/PageContainer';
-import { user } from '@/data/data';
 import { FiCamera } from "react-icons/fi";
 import Image from 'next/image';
 import { useState, useRef } from 'react';
@@ -8,32 +7,51 @@ import { useForm } from 'react-hook-form';
 import EditProfiletab from '@/components/profile/tabs/EditProfiletab';
 import EditPassTab from '@/components/profile/tabs/EditPassTab';
 import { motion, AnimatePresence } from "framer-motion";
+import { useGetMe } from '@/hooks/useGetMe';
+import Loading from '@/components/loading/Loading';
+import { api } from '@/lib/api/axiosInstance';
+import { ErrorToast, SuccessToast } from '@/utils/ValidationToast';
 
 const Page = () => {
     const [activeTab, setActiveTab] = useState('profile');
-    const [previewImage, setPreviewImage] = useState("/images/avatar.png");
+    const { register, handleSubmit } = useForm();
     const fileInputRef = useRef(null);
 
-    const { register, handleSubmit } = useForm({
-        defaultValues: {
-            name: user?.name || '',
-            email: user?.email || '',
-            contact: user?.contact || '',
-            address: user?.address || '',
-            currentPassword: '',
-            newPassword: '',
-            confirmPassword: ''
+    // get profile data
+    const { data: user, isLoading, isError } = useGetMe();
+
+    // Edit Profile Data
+    const onSubmitProfile = async (formData) => {
+        const updateData = {
+            name: formData.name,
+            phone: formData.phone,
+            city: formData.city
         }
-    });
 
-    const onSubmitProfile = (data) => {
-        console.log('Profile Updated:', data);
+        const res = await api.patch("/profile", updateData)
+        console.log(res.data)
     };
 
-    const onSubmitPassword = (data) => {
-        console.log('Password Changed:', data);
+    // Change Password
+    const onSubmitPassword = async (fromData) => {
+        try {
+            const changePass = {
+                old_password: fromData.currentPassword,
+                new_password: fromData.newPassword
+            }
+            const res = await api.post("/profile/change-password", changePass)
+            SuccessToast(res?.data?.message)
+        } catch (error) {
+            const message = error?.response?.data?.message
+            if (message === "Invalid password") {
+                ErrorToast("Invalid Current Password")
+            }
+            ErrorToast("Something Went Wrong")
+        }
+
     };
 
+    // Change Profile Image
     const handleImageChange = (e) => {
         const file = e.target.files?.[0];
         if (file) {
@@ -62,13 +80,23 @@ const Page = () => {
                     transition={{ delay: 0.2 }}
                 >
                     <div className='relative'>
-                        <Image
-                            src={user?.imageUrl || previewImage}
-                            width={100}
-                            height={100}
-                            alt="Profile Picture"
-                            className='rounded-full object-cover w-24 h-24'
-                        />
+                        {
+                            isLoading ? (
+                                <div className='w-24 h-24'>
+                                    <Loading />
+                                </div>
+                            ) : (
+                                <div>
+                                    <Image
+                                        src={user?.photo_url || "https://avatar.iran.liara.run/public/boy"}
+                                        width={100}
+                                        height={100}
+                                        alt="Profile Picture"
+                                        className='rounded-full object-cover w-24 h-24'
+                                    />
+                                </div>
+                            )
+                        }
 
                         <div
                             onClick={() => fileInputRef.current?.click()}
@@ -120,7 +148,7 @@ const Page = () => {
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                <EditProfiletab {...{ activeTab, handleSubmit, onSubmitProfile, register }} />
+                                <EditProfiletab {...{ activeTab, handleSubmit, onSubmitProfile, register, user }} />
                             </motion.div>
                         )}
 
@@ -137,8 +165,8 @@ const Page = () => {
                         )}
                     </AnimatePresence>
                 </div>
-            </div>
-        </PageContainer>
+            </div >
+        </PageContainer >
     );
 };
 

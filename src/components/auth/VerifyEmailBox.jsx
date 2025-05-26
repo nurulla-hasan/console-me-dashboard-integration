@@ -104,7 +104,7 @@ const VerifyEmailForm = () => {
           Check Your Email
         </h1>
         <p className="text-center text-[#333333] mb-16 max-w-xs text-xs">
-          We sent a code to your email address. Please enter the 6-digit code.
+          We sent a code to your email Please enter the 6-digit code.
         </p>
 
         <form onSubmit={handleSubmit}>

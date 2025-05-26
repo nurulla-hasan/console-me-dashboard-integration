@@ -46,6 +46,8 @@ const ResetPasswordForm = () => {
 
       toast.success("Password reset successfully!");
       router.push("/auth/login");
+      localStorage.removeItem("resetEmail");
+      localStorage.removeItem("passwordResetToken");
     } catch (error) {
       console.error(error);
       const msg = error?.response?.data?.message || "Failed to reset password.";

@@ -1,6 +1,6 @@
 
 
-const EditProfiletab = ({activeTab, handleSubmit, onSubmitProfile, register}) => {
+const EditProfiletab = ({activeTab, handleSubmit, onSubmitProfile, register, user}) => {
     return (
         <>
             {activeTab === 'profile' && (
@@ -13,8 +13,9 @@ const EditProfiletab = ({activeTab, handleSubmit, onSubmitProfile, register}) =>
                         <label className="block mb-1 font-medium">User Name</label>
                         <input
                             type="text"
+                            placeholder={user?.name}
                             {...register('name')}
-                            className="w-full border border-teal-400 rounded-md p-2 outline-none"
+                            className="w-full border border-teal-400 rounded-md p-2 outline-none placeholder:text-black"
                         />
                     </div>
 
@@ -22,6 +23,7 @@ const EditProfiletab = ({activeTab, handleSubmit, onSubmitProfile, register}) =>
                         <label className="block mb-1 font-medium">Email</label>
                         <input
                             type="email"
+                            placeholder={user?.email}
                             disabled 
                             {...register('email')}
                             className="w-full border border-teal-400 rounded-md p-2 outline-none disabled:text-gray-400"
@@ -32,8 +34,9 @@ const EditProfiletab = ({activeTab, handleSubmit, onSubmitProfile, register}) =>
                         <label className="block mb-1 font-medium">Contact No</label>
                         <input
                             type="text"
-                            {...register('contact')}
-                            className="w-full border border-teal-400 rounded-md p-2 outline-none"
+                            placeholder={user?.phone}
+                            {...register('phone')}
+                            className="w-full border border-teal-400 rounded-md p-2 outline-none placeholder:text-black"
                         />
                     </div>
 
@@ -41,8 +44,9 @@ const EditProfiletab = ({activeTab, handleSubmit, onSubmitProfile, register}) =>
                         <label className="block mb-1 font-medium">Address</label>
                         <input
                             type="text"
-                            {...register('address')}
-                            className="w-full border border-teal-400 rounded-md p-2 outline-none"
+                            placeholder={user?.city}
+                            {...register('city')}
+                            className="w-full border border-teal-400 rounded-md p-2 outline-none placeholder:text-black"
                         />
                     </div>
 

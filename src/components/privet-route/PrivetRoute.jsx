@@ -1,18 +1,31 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
+import { useGetMe } from "@/hooks/useGetMe";
+import Loading from "../loading/Loading";
 
 export default function PrivateRoute({ children }) {
-  const user = useSelector((state) => state.auth.user);
-  const router  = useRouter();
+  const router = useRouter();
+  const { data: user, isLoading, isError } = useGetMe();
+  const [checked, setChecked] = useState(false);
 
-  // redirect when not authenticated
-  // useEffect(() => {
-  //   if (!user) {
-  //     router.replace(`/auth/login`);
-  //   }
-  // }, [ user, router]);
+  useEffect(() => {
+    if (!isLoading) {
+      if (!user || isError) {
+        router.replace("/auth/login");
+      } else {
+        setChecked(true); // render only after all checks pass
+      }
+    }
+  }, [user, isLoading, isError, router]);
+
+  if (isLoading || !checked) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loading />
+      </div>
+    );
+  }
 
   return children;
 }
