@@ -2,17 +2,18 @@
 import { Suspense } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { PiEyeLight } from "react-icons/pi";
-import { PiEyeSlash } from "react-icons/pi";
+import { PiEyeLight, PiEyeSlash } from "react-icons/pi"; 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { login } from "@/lib/api/auth";
 import { ErrorToast, SuccessToast } from "@/utils/ValidationToast";
+import { jwtDecode } from "jwt-decode";
 
 const LoginFormContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/";
+  const [isLoading, setIsLoading] = useState(false); 
 
   const [showPassword, setShowPassword] = useState(false);
   const [rememberPassword, setRememberPassword] = useState(false);
@@ -23,21 +24,22 @@ const LoginFormContent = () => {
     formState: { errors },
   } = useForm();
 
-
-  const onSubmit = async (formData) => {
+  const onSubmit = async (data) => {
+    setIsLoading(true); 
     try {
-      // 1. Login request
-      const res = await login(formData);
+      const res = await login({ ...data, rememberMe: rememberPassword }); 
+      
       const { accessToken, refreshToken, message } = res.data;
 
-      // 2. Save tokens in localStorage
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      SuccessToast(message);
-
-      // 5. Redirect
-      router.push(redirect);
-      
+      const decode = jwtDecode(accessToken);
+      if (decode?.role === "admin") {
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken); 
+        SuccessToast(message);
+        router.push(redirect);
+      } else {
+        ErrorToast("You are not an admin");
+      }
     } catch (error) {
       const message = error?.response?.data?.message;
       if (!message) {
@@ -51,9 +53,10 @@ const LoginFormContent = () => {
       };
 
       ErrorToast(knownErrors[message] || "Something Went Wrong");
+    } finally {
+      setIsLoading(false); 
     }
   };
-
 
   return (
     <div className="flex items-center justify-center min-h-screen p-3 text-white">
@@ -70,8 +73,9 @@ const LoginFormContent = () => {
               id="email"
               type="email"
               placeholder="Enter your email"
-              className={`w-full px-3 py-2 border  text-[#5C5C5C] text-xs bg-white rounded-sm ${errors.email ? "border-red-500" : "border-[#00A89D]"
-                } focus:outline-none cursor-pointer`}
+              className={`w-full px-3 py-2 border text-[#5C5C5C] text-xs bg-white rounded-sm ${
+                errors.email ? "border-red-500" : "border-[#00A89D]"
+              } focus:outline-none cursor-pointer`}
               {...register("email", {
                 required: "Email is required",
                 pattern: {
@@ -92,8 +96,9 @@ const LoginFormContent = () => {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="********"
-                className={`w-full px-3 py-2 border text-[#5C5C5C] text-xs bg-white rounded-sm ${errors.password ? "border-red-500" : "border-[#00A89D]"
-                  } focus:outline-none cursor-pointer`}
+                className={`w-full px-3 py-2 border text-[#5C5C5C] text-xs bg-white rounded-sm ${
+                  errors.password ? "border-red-500" : "border-[#00A89D]"
+                } focus:outline-none cursor-pointer`}
                 {...register("password", {
                   required: "Password is required",
                 })}
@@ -133,9 +138,12 @@ const LoginFormContent = () => {
 
           <button
             type="submit"
-            className="w-full bg-[#00A89D] text-white py-2 text-xs px-4 hover:bg-[#428a85] transition duration-200 cursor-pointer rounded-sm"
+            disabled={isLoading}
+            className={`w-full text-white py-2 text-xs px-4 transition duration-200 cursor-pointer rounded-sm ${
+              isLoading ? "bg-[#428a85] cursor-not-allowed" : "bg-[#00A89D] hover:bg-[#428a85]"
+            }`}
           >
-            Sign in
+            {isLoading ? "Signing in..." : "Sign in"}
           </button>
         </form>
       </div>
@@ -145,7 +153,7 @@ const LoginFormContent = () => {
 
 const LoginForm = () => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>Loading form...</div>}>
       <LoginFormContent />
     </Suspense>
   );

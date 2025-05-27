@@ -1,7 +1,7 @@
 
 
 const EditProfiletab = ({activeTab, handleSubmit, onSubmitProfile, register, user}) => {
-    return (
+    return ( 
         <>
             {activeTab === 'profile' && (
                 <form onSubmit={handleSubmit(onSubmitProfile)} className="space-y-4">

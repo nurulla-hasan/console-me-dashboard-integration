@@ -1,15 +1,30 @@
+"use client";
 import Link from 'next/link';
 import { AnimatePresence, motion } from "framer-motion";
 import { IoIosArrowDown, IoIosArrowForward } from 'react-icons/io';
 import { LuSettings } from 'react-icons/lu';
 import { MdOutlineLogout } from 'react-icons/md';
+import { useRouter } from 'next/navigation';
+import { SuccessToast, ErrorToast } from '@/utils/ValidationToast';
+import { useQueryClient } from '@tanstack/react-query';
 
 const Sidebar = ({ isHideLayout, menuItems, setSettingsOpen, settingsOpen, settingMenu, pathname, }) => {
 
+    const router = useRouter();
+    const queryClient = useQueryClient();
+
     const handleLogout = () => {
-         localStorage.removeItem("accessToken");
-         localStorage.removeItem("refreshToken");
-    }
+        try {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            queryClient.invalidateQueries({ queryKey: ["me"] });
+            SuccessToast('Logged out successfully!');
+            router.replace('/auth/login');
+
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
+    };
 
     return (
         <>

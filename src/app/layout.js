@@ -10,7 +10,7 @@ import { Toaster } from 'react-hot-toast';
 import { Provider } from 'react-redux';
 import store from '@/redux/store';
 import Topbar from '@/components/layout/Topbar';
-import PrivateRoute from '@/components/privet-route/PrivetRoute';
+import PrivateRoute from '@/components/private-route/PrivateRoute';
 import Sidebar from '@/components/layout/Sidebar';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -32,10 +32,10 @@ const settingMenu = [
 export default function RootLayout({ children }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const pathname = usePathname();
-  const hideRoutes = ["/auth", "/auth/login", "/auth/forgot-password", "/auth/verify-email", "/auth/reset-password"];
-  const isHideLayout = hideRoutes.includes(pathname);
-  return (
+  const publicRoutes = ["/auth/login", "/auth/forgot-password", "/auth/verify-email", "/auth/reset-password"];
+  const isPublicRoute = publicRoutes.includes(pathname);
 
+  return (
     <html lang="en">
       <body>
         <Provider store={store}>
@@ -44,27 +44,33 @@ export default function RootLayout({ children }) {
               position="top-center"
               reverseOrder={false}
             />
-            <div className="h-screen flex container mx-auto max-w-full bg-[#dbf8f8]">
-              {/* Sidebar */}
-              <Sidebar {...{ isHideLayout, menuItems, setSettingsOpen, settingsOpen, settingMenu, pathname }} />
+            {isPublicRoute ? (
+              <div className="font-poppins overflow-y-auto min-h-screen bg-[#f8f8f8]">
+                {children}
+              </div>
+            ) : (
+              <PrivateRoute>
+              <div className="min-h-screen flex container mx-auto max-w-full bg-[#dbf8f8]">
+                {/* Sidebar */}
+                <Sidebar {...{ menuItems, setSettingsOpen, settingsOpen, settingMenu, pathname }} />
 
-              {/* Main content */}
-              <main className="flex-1 overflow-auto scrl-hide bg-[#dbf8f8]">
-                {/* Top bar */}
-                <Topbar isHideLayout={isHideLayout} />
+                {/* Main content */}
+                <main className="flex-1 overflow-auto scrl-hide bg-[#dbf8f8]">
+                  {/* Top bar */}
+                  <Topbar />
 
-                {/* Page content */}
-                {/* <PrivateRoute> */}
-                  <div className={`font-poppins ${hideRoutes ? "" : "min-h-[calc(100vh-96px)]"} overflow-y-auto rounded-t-lg bg-[#f8f8f8] `}>
-                    {children}
+                  <div className='font-poppins min-h-[calc(100vh-96px)] overflow-y-auto rounded-t-lg bg-[#f8f8f8]'>
+                    
+                        {children}
+                    
                   </div>
-                {/* </PrivateRoute> */}
-              </main>
-            </div>
+                </main>
+              </div>
+              </PrivateRoute>
+            )}
           </QueryClientProvider>
         </Provider>
       </body>
     </html>
-
   );
 }

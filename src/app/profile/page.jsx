@@ -11,25 +11,62 @@ import { useGetMe } from '@/hooks/useGetMe';
 import Loading from '@/components/loading/Loading';
 import { api } from '@/lib/api/axiosInstance';
 import { ErrorToast, SuccessToast } from '@/utils/ValidationToast';
+import { useQueryClient } from '@tanstack/react-query';
 
 const Page = () => {
     const [activeTab, setActiveTab] = useState('profile');
     const { register, handleSubmit } = useForm();
     const fileInputRef = useRef(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [previewImage, setPreviewImage] = useState(null); 
 
     // get profile data
     const { data: user, isLoading, isError } = useGetMe();
+    const queryClient = useQueryClient();
 
     // Edit Profile Data
     const onSubmitProfile = async (formData) => {
-        const updateData = {
-            name: formData.name,
-            phone: formData.phone,
-            city: formData.city
+        const dataToSend = new FormData();
+
+        dataToSend.append("name", formData.name);
+        dataToSend.append("phone", formData.phone);
+        dataToSend.append("city", formData.city);
+
+        if (selectedFile) {
+            dataToSend.append("photo", selectedFile);
         }
 
-        const res = await api.patch("/profile", updateData)
-        console.log(res.data)
+        try {
+            const res = await api.patch("/profile", dataToSend, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            console.log(res.data);
+            SuccessToast(res?.data?.message || "Profile updated successfully!");
+
+            queryClient.invalidateQueries({ queryKey: ["me"] });
+            setSelectedFile(null);
+            setPreviewImage(null);
+
+        } catch (error) {
+            const message = error?.response?.data?.message || "Something went wrong!";
+            ErrorToast(message);
+            console.error("Profile update failed:", error);
+        }
+    };
+
+    // Change Profile Image
+    const handleImageChange = (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setSelectedFile(file);
+            const imageURL = URL.createObjectURL(file);
+            setPreviewImage(imageURL);
+        } else {
+            setSelectedFile(null);
+            setPreviewImage(null);
+        }
     };
 
     // Change Password
@@ -45,18 +82,9 @@ const Page = () => {
             const message = error?.response?.data?.message
             if (message === "Invalid password") {
                 ErrorToast("Invalid Current Password")
+            } else { 
+                ErrorToast("Something Went Wrong")
             }
-            ErrorToast("Something Went Wrong")
-        }
-
-    };
-
-    // Change Profile Image
-    const handleImageChange = (e) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const imageURL = URL.createObjectURL(file);
-            setPreviewImage(imageURL);
         }
     };
 
@@ -88,7 +116,8 @@ const Page = () => {
                             ) : (
                                 <div>
                                     <Image
-                                        src={user?.photo_url || "https://avatar.iran.liara.run/public/boy"}
+                                        
+                                        src={previewImage || user?.photo_url || "https://avatar.iran.liara.run/public/boy"}
                                         width={100}
                                         height={100}
                                         alt="Profile Picture"
@@ -120,8 +149,8 @@ const Page = () => {
                     <button
                         onClick={() => setActiveTab('profile')}
                         className={`pb-2 border-b-2 cursor-pointer ${activeTab === 'profile'
-                            ? 'border-teal-500 text-teal-500 font-semibold'
-                            : 'border-transparent text-gray-600'
+                                ? 'border-teal-500 text-teal-500 font-semibold'
+                                : 'border-transparent text-gray-600'
                             }`}
                     >
                         Edit Profile
@@ -129,8 +158,8 @@ const Page = () => {
                     <button
                         onClick={() => setActiveTab('password')}
                         className={`pb-2 border-b-2 cursor-pointer ${activeTab === 'password'
-                            ? 'border-teal-500 text-teal-500 font-semibold'
-                            : 'border-transparent text-gray-600'
+                                ? 'border-teal-500 text-teal-500 font-semibold'
+                                : 'border-transparent text-gray-600'
                             }`}
                     >
                         Change Password

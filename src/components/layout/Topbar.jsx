@@ -6,23 +6,6 @@ import { useGetMe } from '@/hooks/useGetMe';
 const Topbar = ({ isHideLayout }) => {
 
     const { data: user, isLoading, isError } = useGetMe();
-
-    // if (isLoading) {
-    //     return (
-    //         <div className="flex items-center justify-end w-full h-24 pr-24">
-    //             <div className="w-8 h-8 border-4 border-t-teal-500 border-gray-200 rounded-full animate-spin" />
-    //         </div>
-    //     );
-    // }
-
-    // if (isError) {
-    //     return (
-    //         <div className="w-full h-24 flex items-center justify-center bg-red-100 text-red-600">
-    //             ⚠️ Failed to load profile
-    //         </div>
-    //     );
-    // }
-
     return (
         <div className={`${isHideLayout ? "hidden" : ""} bg-[#dbf8f8] backdrop-blur-2xl z-10 sticky top-0 flex justify-end items-center gap-4 h-24 pr-12`}>
             <div className='flex items-center gap-4'>

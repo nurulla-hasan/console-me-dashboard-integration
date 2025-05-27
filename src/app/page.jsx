@@ -8,6 +8,7 @@ import EarningGrowthChart from "@/components/dashboard/EarningGrowthChart";
 import PageContainer from "@/components/container/PageContainer";
 
 export default function Home() {
+
   return (
     <PageContainer>
       {/* Top Info */}
