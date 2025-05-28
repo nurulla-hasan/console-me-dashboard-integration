@@ -1,6 +1,8 @@
+"use client"
 import { FaRegImage } from 'react-icons/fa';
 import { MdOutlineArrowBack } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from 'react';
 
 const CategoryModal = ({
     setIsModalOpen,
@@ -9,8 +11,27 @@ const CategoryModal = ({
     editMode,
     categoryName,
     handleIconUpload,
-    handleSubmit
+    handleSubmit,
+    categoryIcon, // এটি এখন একটি ফাইল অবজেক্ট বা null হবে
+    originalCategoryIconUrl // এডিট মোডের জন্য পুরনো URL
 }) => {
+    const [previewIconUrl, setPreviewIconUrl] = useState(null);
+
+    // Preview image logic
+    useEffect(() => {
+        if (categoryIcon instanceof File) {
+            const url = URL.createObjectURL(categoryIcon);
+            setPreviewIconUrl(url);
+            return () => URL.revokeObjectURL(url); // Clean up URL
+        } else if (editMode && originalCategoryIconUrl) {
+            // যদি এডিট মোড হয় এবং নতুন ফাইল সিলেক্ট না হয় (categoryIcon === null),
+            // তাহলে পুরনো URL ব্যবহার করুন।
+            setPreviewIconUrl(originalCategoryIconUrl);
+        } else {
+            setPreviewIconUrl(null); // অন্যথায় প্রিভিউ খালি রাখুন
+        }
+    }, [categoryIcon, editMode, originalCategoryIconUrl]); // Dependency array তে originalCategoryIconUrl যোগ করা হয়েছে
+
     return (
         <AnimatePresence>
             {isModalOpen && (
@@ -61,6 +82,13 @@ const CategoryModal = ({
                                 className="w-full border border-[#00A89D] px-3 py-2 rounded outline-none cursor-pointer text-[15px] text-[#3333339b]"
                                 id="icon-upload"
                             />
+                            {previewIconUrl && (
+                                <img
+                                    src={previewIconUrl}
+                                    alt="Category Icon Preview"
+                                    className="mt-2 h-16 w-16 object-cover rounded-full mx-auto"
+                                />
+                            )}
                             <FaRegImage
                                 className="absolute top-10 right-3"
                                 size={20}

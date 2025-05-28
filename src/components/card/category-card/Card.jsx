@@ -5,7 +5,7 @@ const Card = ({ handleDelete, handleEdit, category}) => {
         <>
             <div className="bg-white p-4 rounded shadow flex flex-col justify-center items-center h-fit">
                 <Image
-                    src={category?.icon}
+                    src={category?.icon_url}
                     alt={category.name}
                     width={200}
                     height={200}

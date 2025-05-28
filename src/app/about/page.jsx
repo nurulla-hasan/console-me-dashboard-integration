@@ -36,6 +36,7 @@ We aim to make expert consulting accessible, affordable, and efficient to empowe
 Contact us at [contact@consultme.com] or visit www.appname.com.
 `;
 
+
 const editorConfig = {
     theme: {
         paragraph: "editor-paragraph",

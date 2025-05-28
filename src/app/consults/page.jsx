@@ -27,10 +27,6 @@ export default function Consults() {
     setShowModal(true);
   };
 
-  // const handleAccept = (id) => {
-  //   setShowModal(false);
-  // };
-
   const { mutate: handleAccept, isPending } = useBlockConsult();
     const onBlockClick = (id) => {
       handleAccept(id);

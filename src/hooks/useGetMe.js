@@ -1,27 +1,30 @@
-"use client";
 import { getUserProfile } from '@/lib/api/auth';
 import { useQuery } from '@tanstack/react-query';
 import { jwtDecode } from "jwt-decode";
 
 export const useGetMe = () => {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+  let userId = null;
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      userId = decoded?.id;
+    } catch (error) {
+      console.error("Failed to decode token on init:", error);
+    }
+  }
 
   return useQuery({
-    queryKey: ['me'],
+    queryKey: ['me', userId],
     queryFn: async () => {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        throw new Error("No access token");
+      if (!token || !userId) { 
+         throw new Error("Missing token or user ID for profile fetch.");
       }
-      const decoded = jwtDecode(token);
-      const userId = decoded?.id;
-      if (!userId) {
-        throw new Error("Invalid token: No user ID found.");
-      }
-
       const res = await getUserProfile(userId);
       return res.data.data;
     },
     staleTime: 1000 * 60 * 5,
     retry: 1,
+    enabled: !!token && !!userId,
   });
 };

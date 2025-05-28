@@ -5,7 +5,6 @@ import { IoIosArrowDown, IoIosArrowForward } from 'react-icons/io';
 import { LuSettings } from 'react-icons/lu';
 import { MdOutlineLogout } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
-import { SuccessToast, ErrorToast } from '@/utils/ValidationToast';
 import { useQueryClient } from '@tanstack/react-query';
 
 const Sidebar = ({ isHideLayout, menuItems, setSettingsOpen, settingsOpen, settingMenu, pathname, }) => {
@@ -15,14 +14,14 @@ const Sidebar = ({ isHideLayout, menuItems, setSettingsOpen, settingsOpen, setti
 
     const handleLogout = () => {
         try {
+            console.log("logout functon called")
+            queryClient.invalidateQueries({ queryKey: ["me"] });
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
-            queryClient.invalidateQueries({ queryKey: ["me"] });
-            SuccessToast('Logged out successfully!');
             router.replace('/auth/login');
 
         } catch (error) {
-            console.error("Logout failed:", error);
+            console.log(error);
         }
     };
 

@@ -1,7 +1,7 @@
 "use client";
 import { blockUser } from "@/lib/mutations/blockUser";
+import { ErrorToast, SuccessToast } from "@/utils/ValidationToast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
 
 export const useBlockConsult = () => {
   const queryClient = useQueryClient();
@@ -9,11 +9,11 @@ export const useBlockConsult = () => {
   return useMutation({
     mutationFn: blockUser,
     onSuccess: (data) => {
-      toast.success(data.message);
+      SuccessToast(data.message);
       queryClient.invalidateQueries({ queryKey: ["consultants"] });
     },
-    onError: () => {
-      toast.error("Failed to update user status.");
+    onError: (error) => {
+      ErrorToast(error.response?.data?.message || error.message || "Failed to update user status.");
     },
   });
 };

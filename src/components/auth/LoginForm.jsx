@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PiEyeLight, PiEyeSlash } from "react-icons/pi"; 
+import { ImSpinner9 } from "react-icons/im";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { login } from "@/lib/api/auth";
@@ -36,7 +37,7 @@ const LoginFormContent = () => {
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken); 
         SuccessToast(message);
-        router.push(redirect);
+        router.replace(redirect);
       } else {
         ErrorToast("You are not an admin");
       }
@@ -139,11 +140,11 @@ const LoginFormContent = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full text-white py-2 text-xs px-4 transition duration-200 cursor-pointer rounded-sm ${
+            className={`w-full text-white py-2 text-xs flex justify-center items-center px-4 transition duration-200 cursor-pointer rounded-sm ${
               isLoading ? "bg-[#428a85] cursor-not-allowed" : "bg-[#00A89D] hover:bg-[#428a85]"
             }`}
           >
-            {isLoading ? "Signing in..." : "Sign in"}
+            {isLoading ? <ImSpinner9 size={16} className="animate-spin"/> : "Sign in"}
           </button>
         </form>
       </div>

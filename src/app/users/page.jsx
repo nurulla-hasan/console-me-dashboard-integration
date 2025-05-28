@@ -26,14 +26,15 @@ export default function Users() {
     queryKey: ["users", page, query],
     queryFn: () => getUsers(page, query),
     keepPreviousData: true,
+    
   });
   const { users, totalUsers, totalPages } = data;
 
 
   // Toggle User Block and Unblock
-  const { mutate: handleBlock, isPending } = useBlockUser();
+  const { mutate: handleBlockUser, isPending } = useBlockUser();
   const onBlockClick = (id) => {
-    handleBlock(id);
+    handleBlockUser(id);
   };
 
   return (
