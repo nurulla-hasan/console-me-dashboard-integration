@@ -1,6 +1,11 @@
 import { api } from "../api/axiosInstance"
 
 export const getWithdrawRequest = async () => {
-    const res = api.get("/admin/payments/withdraw-requests")
-    return res.data
+    try {
+        const res = await api.get("/admin/payments/withdraw-requests")
+        return res.data
+    } catch (error) {
+        console.error("Error fetching withdraw requests:", error);
+        throw error;
+    }
 }

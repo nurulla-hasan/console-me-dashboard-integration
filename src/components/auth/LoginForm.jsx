@@ -9,6 +9,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { login } from "@/lib/api/auth";
 import { ErrorToast, SuccessToast } from "@/utils/ValidationToast";
 import { jwtDecode } from "jwt-decode";
+import Loading from "../loading/Loading";
 
 const LoginFormContent = () => {
   const router = useRouter();
@@ -154,7 +155,7 @@ const LoginFormContent = () => {
 
 const LoginForm = () => {
   return (
-    <Suspense fallback={<div>Loading form...</div>}>
+    <Suspense fallback={<Loading/>}>
       <LoginFormContent />
     </Suspense>
   );

@@ -16,4 +16,4 @@ export const getUsers = async (pageNumber = 1, query = '') => {
     throw error;
   }
 };
- 
+  

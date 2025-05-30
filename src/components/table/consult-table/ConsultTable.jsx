@@ -1,5 +1,6 @@
+import { ImSpinner9 } from "react-icons/im";
 
-const ConsultTable = ({ paged, handleModalOpen }) => {
+const ConsultTable = ({ paged, handleModalOpen, isPending, currentlyBlockingUserId }) => {
     return (
         <>
             <table className="min-w-full text-sm">
@@ -15,33 +16,38 @@ const ConsultTable = ({ paged, handleModalOpen }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {paged?.map((user) => (
-                        <tr key={user._id} className={`odd:bg-gray-50 hover:bg-teal-50`}>
-                            <td className="px-4 py-3">{user._id.slice(0, 8)}</td>
-                            <td className="px-4 py-3 gap-2">
-                                <div className='flex items-center gap-2'>
-                                    <img src={user.photo_url} alt="" className="w-9 h-9 rounded-full shrink-0" />
-                                    <span>{user.name}</span>
-                                </div>
-                            </td>
-                            <td className="px-4 py-3">{user.service}</td>
-                            <td className="px-4 py-3">{user.email}</td>
-                            <td className="px-4 py-3">{user.phone}</td>
-                            <td className="px-4 py-3">{user.account_status}</td>
-                            <td className="px-4 py-3 flex justify-center">
-                                <button
-                                    // disabled={user.account_status === "Banned"}
-                                    onClick={() => handleModalOpen(user)}
-                                    className={`w-22 py-2 flex items-center justify-center rounded cursor-pointer transition-all duration-300 ${user.account_status === "Banned"
-                                        ? " bg-red-100 text-red-500 hover:bg-red-200 hover:text-red-600 border border-red-300 disabled:cursor-not-allowed"
-                                        : "bg-green-100 text-green-700 hover:bg-green-200 border border-green-300"
-                                        }`}
-                                >
-                                    {user.account_status === "Banned" ? "Unblock" : "Block"}
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
+                    {paged?.map((user) => {
+                        const isBlockingThisUser = currentlyBlockingUserId === user._id;
+                        return (
+                            <tr key={user._id} className={`odd:bg-gray-50 hover:bg-teal-50`}>
+                                <td className="px-4 py-3">{user._id.slice(0, 8)}</td>
+                                <td className="px-4 py-3 gap-2">
+                                    <div className='flex items-center gap-2'>
+                                        <img src={user.photo_url || "https://avatar.iran.liara.run/public"} alt="" className="w-9 h-9 rounded-full shrink-0" />
+                                        <span>{user.name}</span>
+                                    </div>
+                                </td>
+                                <td className="px-4 py-3">{user.service}</td>
+                                <td className="px-4 py-3">{user.email}</td>
+                                <td className="px-4 py-3">{user.phone}</td>
+                                <td className="px-4 py-3">{user.account_status}</td>
+                                <td className="px-4 py-3 flex justify-center">
+                                    <button
+                                        disabled={isBlockingThisUser}
+                                        onClick={() => handleModalOpen(user)}
+                                        className={`w-22 py-2 flex items-center justify-center rounded cursor-pointer transition-all duration-300 ${user.account_status === "Banned"
+                                            ? " bg-red-100 text-red-500 hover:bg-red-200 hover:text-red-600 border border-red-300 disabled:cursor-not-allowed"
+                                            : "bg-green-100 text-green-700 hover:bg-green-200 border border-green-300"
+                                            }`}
+                                    >
+                                        {
+                                            isBlockingThisUser ? <ImSpinner9 size={16} className="animate-spin" /> : user.account_status === "Banned" ? "Unblock" : "Block"
+                                        }
+                                    </button>
+                                </td>
+                            </tr>
+                        )
+                    })}
                 </tbody>
             </table>
         </>

@@ -41,6 +41,14 @@ export default function RootLayout({ children }) {
         <Provider store={store}>
           <QueryClientProvider client={queryClient}>
             <Toaster
+              toastOptions={{
+                style: {
+                  padding: '10px',
+                  borderRadius: "2px",
+                  color: '#fff',
+                  backgroundColor: '#00A89D',
+                },
+              }}
               position="top-center"
               reverseOrder={false}
             />
@@ -50,22 +58,22 @@ export default function RootLayout({ children }) {
               </div>
             ) : (
               <PrivateRoute>
-              <div className="min-h-screen flex container mx-auto max-w-full bg-[#dbf8f8]">
-                {/* Sidebar */}
-                <Sidebar {...{ menuItems, setSettingsOpen, settingsOpen, settingMenu, pathname }} />
+                <div className="min-h-screen flex container mx-auto max-w-full bg-[#dbf8f8]">
+                  {/* Sidebar */}
+                  <Sidebar {...{ menuItems, setSettingsOpen, settingsOpen, settingMenu, pathname }} />
 
-                {/* Main content */}
-                <main className="flex-1 overflow-auto scrl-hide bg-[#dbf8f8]">
-                  {/* Top bar */}
-                  <Topbar />
+                  {/* Main content */}
+                  <main className="flex-1 overflow-auto scrl-hide bg-[#dbf8f8]">
+                    {/* Top bar */}
+                    <Topbar />
 
-                  <div className='font-poppins min-h-[calc(100vh-96px)] overflow-y-auto rounded-t-lg bg-[#f8f8f8]'>
-                    
-                        {children}
-                    
-                  </div>
-                </main>
-              </div>
+                    <div className='font-poppins min-h-[calc(100vh-96px)] overflow-y-auto rounded-t-lg bg-[#f8f8f8]'>
+
+                      {children}
+
+                    </div>
+                  </main>
+                </div>
               </PrivateRoute>
             )}
           </QueryClientProvider>

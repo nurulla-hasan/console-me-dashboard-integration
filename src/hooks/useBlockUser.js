@@ -1,5 +1,5 @@
 "use client";
-import { blockUser } from "@/lib/mutations/blockUser";
+import { blockUserConsult } from "@/lib/mutations/blockUserConsult";
 import { ErrorToast, SuccessToast } from "@/utils/ValidationToast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -7,7 +7,7 @@ export const useBlockUser = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: blockUser,
+    mutationFn: blockUserConsult,
     onSuccess: (data) => {
       SuccessToast(data.message);
       queryClient.invalidateQueries({ queryKey: ["users"] });
@@ -17,3 +17,4 @@ export const useBlockUser = () => {
     },
   });
 };
+ 

@@ -4,7 +4,7 @@ export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
 });
 
-// ✅ Request interceptor: dynamically add token
+// Request interceptor: dynamically add token
 api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("accessToken");
@@ -15,7 +15,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// ✅ Response interceptor: handle 401
+// Response interceptor: handle 401
 api.interceptors.response.use(
   (response) => response,
   (error) => {

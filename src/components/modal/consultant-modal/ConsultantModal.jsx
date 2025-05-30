@@ -13,21 +13,21 @@ const ConsultantModal = ({ showModal, selectedUser, handleReject, handleAccept }
           transition={{ duration: 0.1 }}
         >
           <motion.div
-            className="bg-white rounded-xl max-w-lg p-4"
+            className="bg-white rounded-sm max-w-lg p-4"
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0.8 }}
             transition={{ duration: 0.1 }}
           >
             {/* Header */}
-            <div className="bg-[#00a89dbc] rounded-xl flex flex-col justify-center items-center gap-2 mb-4 p-4">
-                <Image
-                  src={selectedUser?.photo_url || "/placeholder.jpg"}
-                  width={500}
-                  height={500}
-                  alt="avatar"
-                  className="rounded-full w-20 h-20"
-                />
+            <div className="bg-[#00a89dbc] rounded-sm flex flex-col justify-center items-center gap-2 mb-4 p-4">
+              <Image
+                src={selectedUser?.photo_url || "https://avatar.iran.liara.run/public"}
+                width={500}
+                height={500}
+                alt="avatar"
+                className="rounded-full w-20 h-20"
+              />
               <div className="text-white text-center">
                 <h1 className="font-medium text-2xl">{selectedUser?.name}</h1>
                 <p className="text-sm mt-2 text-gray-200">{selectedUser?.about}</p>
@@ -45,10 +45,10 @@ const ConsultantModal = ({ showModal, selectedUser, handleReject, handleAccept }
                   <h3 className="font-medium">Phone</h3>
                   <p>{selectedUser?.phone}</p>
                 </div>
-                <div>
+                {/* <div>
                   <h3 className="font-medium">Location</h3>
                   <p>{`${selectedUser?.city}, ${selectedUser?.country}`}</p>
-                </div>
+                </div> */}
               </div>
               <div className="space-y-4 text-sm">
                 <div>
@@ -94,15 +94,17 @@ const ConsultantModal = ({ showModal, selectedUser, handleReject, handleAccept }
             <div className="flex justify-between gap-8 px-6">
               <button
                 onClick={handleReject}
-                className="border text-black py-2 w-full rounded-md cursor-pointer"
+                className="border text-black text-sm py-1 w-full rounded-sm cursor-pointer"
               >
                 Decline
               </button>
               <button
-                onClick={()=>handleAccept(selectedUser?._id)}
-                className="bg-teal-600 text-white py-2 w-full rounded-md cursor-pointer"
+                onClick={() => handleAccept(selectedUser?._id)}
+                className="bg-teal-600 text-white text-sm py-1 w-full rounded-sm cursor-pointer"
               >
-                Accept
+                {
+                  selectedUser.account_status === "Banned" ? "Unblock" : "Block"
+                }
               </button>
             </div>
           </motion.div>

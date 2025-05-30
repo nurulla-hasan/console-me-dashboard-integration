@@ -1,8 +1,9 @@
+// app/dashboard/admin/users/page.jsx
 "use client";
 import PageContainer from "@/components/container/PageContainer";
 import Pagination from "@/components/pagination/Pagination";
 import UserTable from "@/components/table/user-table/UserTable";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
@@ -11,11 +12,12 @@ import { useBlockUser } from "@/hooks/useBlockUser";
 import Loading from "@/components/loading/Loading";
 import Error from "@/components/error/Error";
 
-export default function Users() {
+export const Users = () => {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
+  const [blockingUserId, setBlockingUserId] = useState(null); 
 
   // Get users and pagination
   const {
@@ -26,16 +28,23 @@ export default function Users() {
     queryKey: ["users", page, query],
     queryFn: () => getUsers(page, query),
     keepPreviousData: true,
-    
   });
   const { users, totalUsers, totalPages } = data;
 
-
   // Toggle User Block and Unblock
   const { mutate: handleBlockUser, isPending } = useBlockUser();
+
   const onBlockClick = (id) => {
+    setBlockingUserId(id);
     handleBlockUser(id);
   };
+
+  useEffect(() => {
+    if (!isPending && blockingUserId) {
+      setBlockingUserId(null);
+    }
+  }, [isPending, blockingUserId]);
+
 
   return (
     <PageContainer>
@@ -71,9 +80,13 @@ export default function Users() {
         {isLoading ? (
           <Loading />
         ) : isError ? (
-          <Error itemName='users'/>
+          <Error itemName='users' />
         ) : (
-          <UserTable users={users} onBlockClick={onBlockClick} />
+          <UserTable
+            users={users}
+            onBlockClick={onBlockClick} 
+            currentlyBlockingUserId={blockingUserId}
+          />
         )}
       </motion.div>
 
@@ -97,3 +110,5 @@ export default function Users() {
     </PageContainer>
   );
 }
+
+export default Users;

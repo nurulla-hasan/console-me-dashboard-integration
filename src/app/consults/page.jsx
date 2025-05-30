@@ -4,7 +4,7 @@ import PageContainer from "@/components/container/PageContainer";
 import ConsultantModal from "@/components/modal/consultant-modal/ConsultantModal";
 import Pagination from "@/components/pagination/Pagination";
 import ConsultTable from "@/components/table/consult-table/ConsultTable";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { useConsultants } from "@/hooks/useConsultants";
@@ -20,6 +20,8 @@ export default function Consults() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
+   const [blockingUserId, setBlockingUserId] = useState(null); 
+
   const { data, isLoading, isError } = useConsultants({ page, search: query });
 
   const handleModalOpen = (user) => {
@@ -29,9 +31,12 @@ export default function Consults() {
 
   const { mutate: handleAccept, isPending } = useBlockConsult();
     const onBlockClick = (id) => {
+      setBlockingUserId(id);
       handleAccept(id);
       setShowModal(false);
     };
+
+    console.log(isPending)
 
   const handleReject = () => {
     setShowModal(false);
@@ -40,6 +45,13 @@ export default function Consults() {
   const consultants = data?.consultants || [];
   const total = data?.totalConsultants || 0;
   const pageCount = data?.totalPages || 1;
+
+
+    useEffect(() => {
+      if (!isPending && blockingUserId) {
+        setBlockingUserId(null);
+      }
+    }, [isPending, blockingUserId]);
 
   return (
     <PageContainer>
@@ -55,11 +67,11 @@ export default function Consults() {
           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <input
             placeholder="Search here..."
-            value={query}
-            onChange={(e) => {
-              setPage(1);
-              setQuery(e.target.value);
-            }}
+            // value={query}
+            // onChange={(e) => {
+            //   setPage(1);
+            //   setQuery(e.target.value);
+            // }}
             className="w-full pl-10 pr-4 py-2 rounded-md border border-[#00A89D] focus:outline-none"
           />
         </div>
@@ -79,7 +91,7 @@ export default function Consults() {
         ) : consultants.length === 0 ? (
           <NoData />
         ) : (
-          <ConsultTable paged={consultants} handleModalOpen={handleModalOpen} />
+          <ConsultTable paged={consultants} handleModalOpen={handleModalOpen} currentlyBlockingUserId={blockingUserId}/>
         )}
       </motion.div>
 
@@ -103,7 +115,7 @@ export default function Consults() {
             Showing {(page - 1) * pageSize + 1}-{Math.min(page * pageSize, total)} of {total}
           </span>
           <div className="flex items-center gap-2">
-            <Pagination page={page} setPage={setPage} pageCount={pageCount} />
+            <Pagination page={page} setPage={setPage} pageCount={pageCount}/>
           </div>
         </motion.div>
       )}
