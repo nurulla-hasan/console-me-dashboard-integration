@@ -16,3 +16,4 @@ export const getConsultants = async ({ page = 1, search = "" }) => {
     throw error;
   }
 };
+ 

@@ -1,140 +1,104 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { ListPlugin } from "@lexical/react/LexicalListPlugin";
-import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
-import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import ToolbarPlugin from "@/components/editor/ToolbarPlugin";
-import { useState, useMemo, useEffect } from "react";
-import { $getRoot, $createParagraphNode, $createTextNode } from "lexical";
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { ListNode, ListItemNode } from "@lexical/list";
-import { HeadingNode, QuoteNode } from "@lexical/rich-text";
+import dynamic from "next/dynamic";
+import { useRef, useEffect, useState } from "react";
+import { CgSpinnerTwo } from "react-icons/cg";
+import { ErrorToast, SuccessToast } from "@/utils/ValidationToast";
 import { getLegal } from "@/lib/queries/getLegal";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { updateLegal } from "@/lib/mutations/updateLegal";
 import Loading from "@/components/loading/Loading";
-import Error from "@/components/error/Error";
-import toast from "react-hot-toast";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
-const LexicalEditorInstancePlugin = ({ setEditorInstance }) => {
-  const [editor] = useLexicalComposerContext();
-  useEffect(() => {
-    setEditorInstance(editor);
-  }, [editor, setEditorInstance]);
-  return null;
-};
+// Dynamically import JoditEditor (SSR off)
+const JoditEditor = dynamic(() => import("jodit-react"), {
+  ssr: false,
+  loading: () => <Loading />
+});
 
 const Terms = () => {
   const [content, setContent] = useState("");
-  const [editorInstance, setEditorInstance] = useState(null);
-  const [isClient, setIsClient] = useState(false); 
-
+  const [isSaving, setIsSaving] = useState(false);
+  const editor = useRef(null);
   const queryClient = useQueryClient();
 
   const { data: legalData, isLoading, isError } = useQuery({
     queryKey: ["legal", "terms"],
     queryFn: () => getLegal("terms"),
-    enabled: true,
   });
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    if (legalData?.data?.content) {
+    if (!isLoading && !isError && legalData?.data?.content) {
       setContent(legalData.data.content);
     }
-  }, [legalData]);
+  }, [legalData, isLoading, isError]);
 
-  const updateLegalMutation = useMutation({
-    mutationFn: updateLegal,
-    onSuccess: () => {
-      queryClient.invalidateQueries(["legal", "terms"]);
-      toast.success("Terms and Conditions updated successfully!");
-    },
-    onError: (error) => {
-      console.error("Error updating legal content:", error);
-      toast.error("Failed to update Terms and Conditions.");
-    },
-  });
+  const handleSubmit = async () => {
+    if (!content || content.trim() === "") {
+      ErrorToast("Content is required");
+      return;
+    }
 
-  // Initialize editor state with fetched content
-  const editorConfig = useMemo(() => ({
-    theme: {
-      paragraph: "editor-paragraph",
-    },
-    onError(error) {
-      console.error(error);
-      throw error;
-    },
-    nodes: [ListNode, ListItemNode, HeadingNode, QuoteNode],
-    editorState: () => {
-      const root = $getRoot();
-      root.clear();
-      if (content) {
-        root.append($createParagraphNode().append($createTextNode(content)));
-      } else {
-        root.append($createParagraphNode());
-      }
-    },
-  }), [content]);
-
-  const handleChange = (editorState) => {
-    editorState.read(() => {
-      const root = $getRoot();
-      setContent(root.getTextContent());
-    });
+    setIsSaving(true);
+    try {
+      await updateLegal({
+        type: "terms",
+        content,
+      });
+      SuccessToast("Terms updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["legal", "terms"] });
+    } catch (error) {
+      ErrorToast("Failed to update Terms. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleSave = () => {
-    updateLegalMutation.mutate({ type: "terms", content });
+  const editorConfig = {
+    readonly: false,
+    height: 500,
+    style: {
+      backgroundColor: "#fff",
+      color: "#000",
+      fontSize: "16px",
+    },
+    toolbarAdaptive: false,
+    toolbarSticky: false,
+    showCharsCounter: true,
+    showWordsCounter: true,
+    showXPathInStatusbar: false,
+    placeholder: "Write your Terms & Conditions here...",
   };
-
-  if (!isClient) {
-    return null;
-  }
 
   return (
-    <div className="space-y-4 text-[#333333] m-5 overflow-auto scrl-hide h-[calc(100vh-138px)]">
-      <div className="flex flex-col justify-between h-full">
-        <div>
-          <h2 className="text-xl font-medium text-gray-800">Terms and Conditions</h2>
+    <div className="bg-[#F6F6F6] min-h-[calc(100vh-96px)] p-4">
+      {!isLoading ? (
+        <div className="bg-white rounded shadow p-4">
+          <JoditEditor
+            ref={editor}
+            value={content}
+            onBlur={(newContent) => setContent(newContent)}
+            config={editorConfig}
+          />
+        </div>
+      ) : (
+        <Loading />
+      )}
 
-          {isLoading ? (
-            <Loading />
-          ) : isError ? (
-            <Error itemName="terms" />
+      <div className="flex py-6 justify-center">
+        <button
+          onClick={handleSubmit}
+          disabled={isSaving}
+          className="px-8 bg-teal-500 hover:bg-teal-600 text-white py-2 rounded-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSaving ? (
+            <div className="flex gap-2 items-center">
+              <CgSpinnerTwo className="animate-spin" fontSize={16} />
+              Processing...
+            </div>
           ) : (
-            <LexicalComposer initialConfig={editorConfig}>
-              <ToolbarPlugin />
-              <RichTextPlugin
-                contentEditable={<ContentEditable className="min-h-[300px] rounded-md outline-none" />}
-                placeholder={<div className="editor-placeholder">Enter Terms and Conditions...</div>}
-                ErrorBoundary={LexicalErrorBoundary}
-              />
-              <HistoryPlugin />
-              <ListPlugin />
-              <AutoFocusPlugin />
-              <LexicalEditorInstancePlugin setEditorInstance={setEditorInstance} />
-              <OnChangePlugin onChange={handleChange} />
-            </LexicalComposer>
+            "Save"
           )}
-        </div>
-        <div className="flex justify-center sticky bottom-0 bg-[#f8f8f8] py-4">
-          <button
-            onClick={handleSave}
-            className="px-6 py-2 bg-[#0ABAB5] text-white rounded-md hover:bg-[#099c99] transition cursor-pointer"
-            disabled={updateLegalMutation.isLoading}
-          >
-            {updateLegalMutation.isLoading ? "Saving..." : "Save Changes"}
-          </button>
-        </div>
+        </button>
       </div>
     </div>
   );

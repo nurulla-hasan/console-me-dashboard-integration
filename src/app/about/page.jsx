@@ -1,104 +1,107 @@
 "use client";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { ListPlugin } from "@lexical/react/LexicalListPlugin";
-import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
-import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import ToolbarPlugin from "@/components/editor/ToolbarPlugin";
-import { useState } from "react";
-import { $getRoot, $createParagraphNode, $createTextNode } from "lexical";
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { ListNode, ListItemNode } from "@lexical/list";
-import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 
-const initialText = `Welcome to Consult Me, your mobile platform for consulting. We connect businesses of all sizes with experienced consultants for affordable, tailored advice-without the overhead of traditional services.
+import dynamic from "next/dynamic";
+import { useRef, useEffect, useState } from "react";
+import { CgSpinnerTwo } from "react-icons/cg";
+import { ErrorToast, SuccessToast } from "@/utils/ValidationToast";
+import { getLegal } from "@/lib/queries/getLegal";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { updateLegal } from "@/lib/mutations/updateLegal";
+import Loading from "@/components/loading/Loading";
 
-Who We Are:
-Our team of professionals offers expertise across business strategy, marketing, finance, technology, and more. Our mission is to provide accessible consulting to help your business grow and succeed. 
+// Dynamically import JoditEditor (SSR off)
+const JoditEditor = dynamic(() => import("jodit-react"), {
+    ssr: false,
+    loading: () => <Loading />
+});
 
-How It Works:
-Download: Available on iOS and Android
-Select: Browse consultants based on expertise
-Book: Schedule your session
-Get Results: Receive actionable advice and solutions
+const AboutUs = () => {
+    const [content, setContent] = useState("");
+    const [isSaving, setIsSaving] = useState(false);
+    const editor = useRef(null);
+    const queryClient = useQueryClient();
 
-Why Choose Us?
-Expert Consultants
-Flexible and Accessible
-Affordable Services
-Confidential and Secure
-Customer-Focused
+    const { data: legalData, isLoading, isError } = useQuery({
+        queryKey: ["legal", "about"],
+        queryFn: () => getLegal("about"),
+    });
 
-Our Vision:
-We aim to make expert consulting accessible, affordable, and efficient to empower businesses to thrive.
-Contact us at [contact@consultme.com] or visit www.appname.com.
-`;
+    useEffect(() => {
+        if (!isLoading && !isError && legalData?.data?.content) {
+            setContent(legalData.data.content);
+        }
+    }, [legalData, isLoading, isError]);
 
+    const handleSubmit = async () => {
+        if (!content || content.trim() === "") {
+            ErrorToast("Content is required");
+            return;
+        }
 
-const editorConfig = {
-    theme: {
-        paragraph: "editor-paragraph",
-    },
-    onError(error) {
-        throw error;
-    },
-    nodes: [
-        ListNode,
-        ListItemNode,
-        HeadingNode,
-        QuoteNode,
-    ],
-    editorState: () => {
-        const root = $getRoot();
-        const paragraph = $createParagraphNode();
-        paragraph.append($createTextNode(initialText));
-        root.append(paragraph);
-    },
-};
-
-const About = () => {
-    const [content, setContent] = useState(initialText);
-
-    const handleChange = (editorState) => {
-        editorState.read(() => {
-            const root = $getRoot();
-            setContent(root.getTextContent());
-        });
+        setIsSaving(true);
+        try {
+            await updateLegal({
+                type: "about",
+                content,
+            });
+            SuccessToast("About updated successfully");
+            queryClient.invalidateQueries({ queryKey: ["legal", "About"] });
+        } catch (error) {
+            ErrorToast("Failed to update About. Please try again.");
+        } finally {
+            setIsSaving(false);
+        }
     };
 
-    const handleSave = () => {
-        console.log("Saved content:", content);
+    const editorConfig = {
+        readonly: false,
+        height: 500,
+        style: {
+            backgroundColor: "#fff",
+            color: "#000",
+            fontSize: "16px",
+        },
+        toolbarAdaptive: false,
+        toolbarSticky: false,
+        showCharsCounter: true,
+        showWordsCounter: true,
+        showXPathInStatusbar: false,
+        placeholder: "Write your About & Conditions here...",
     };
 
     return (
-        <div className="space-y-4 text-[#333333] m-5 overflow-auto scrl-hide">
-            <div className="flex flex-col justify-between gap-6 h-[85vh]">
-                <div>
-                    <h2 className="text-xl font-medium text-gray-800">About Us</h2>
-                    <LexicalComposer initialConfig={editorConfig}>
-                        <ToolbarPlugin />
-                        <RichTextPlugin
-                            contentEditable={<ContentEditable className="min-h-[300px] rounded-md outline-none" />}
-                            placeholder=""
-                            ErrorBoundary={LexicalErrorBoundary}
-                        />
-                        <HistoryPlugin />
-                        <ListPlugin />
-                        <AutoFocusPlugin />
-                        <OnChangePlugin onChange={handleChange} />
-                    </LexicalComposer>
+        <div className="bg-[#F6F6F6] min-h-[calc(100vh-96px)] p-4">
+            {!isLoading ? (
+                <div className="bg-white rounded shadow p-4">
+                    <JoditEditor
+                        ref={editor}
+                        value={content}
+                        onBlur={(newContent) => setContent(newContent)}
+                        config={editorConfig}
+                    />
                 </div>
+            ) : (
+                <Loading />
+            )}
 
-                <div className="flex justify-center  bg-[#f8f8f8]">
-                    <button onClick={handleSave} className="px-6 py-2 bg-[#0ABAB5] text-white rounded-md hover:bg-[#099c99] transition cursor-pointer">
-                        Save Changes
-                    </button>
-                </div>
+            <div className="flex py-6 justify-center">
+                <button
+                    onClick={handleSubmit}
+                    disabled={isSaving}
+                    className="px-8 bg-teal-500 hover:bg-teal-600 text-white py-2 rounded-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {isSaving ? (
+                        <div className="flex gap-2 items-center">
+                            <CgSpinnerTwo className="animate-spin" fontSize={16} />
+                            Processing...
+                        </div>
+                    ) : (
+                        "Save"
+                    )}
+                </button>
             </div>
         </div>
     );
 };
 
-export default About;
+export default AboutUs;
