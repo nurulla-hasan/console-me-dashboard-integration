@@ -1,15 +1,13 @@
-// hooks/useCategoryMutations.js
 import { api } from "@/lib/api/axiosInstance";
+import { ErrorToast } from "@/utils/ValidationToast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast"; // Ensure toast is imported for onError
 
 // Add Category
 export const useAddCategory = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (formData) => { // Expect FormData here
-            // Axios will automatically set Content-Type: multipart/form-data for FormData
+        mutationFn: async (formData) => {
             const res = await api.post("/admin/category/add", formData);
             return res.data;
         },
@@ -18,7 +16,6 @@ export const useAddCategory = () => {
         },
         onError: (error) => {
             console.error("Add Category Error:", error.response?.data || error.message);
-            // ErrorToast("Failed to add category"); // Handled in component for specific toast
         }
     });
 };
@@ -28,10 +25,8 @@ export const useUpdateCategory = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (formData) => { // Expect FormData here
-            // The formData should already contain the 'id' if added in handleSubmit
-            // Use PATCH method as per your Postman screenshots
-            const res = await api.patch("/admin/category/update", formData); // Changed to api.patch
+        mutationFn: async (formData) => { 
+            const res = await api.patch("/admin/category/update", formData);
             return res.data;
         },
         onSuccess: () => {
@@ -39,12 +34,10 @@ export const useUpdateCategory = () => {
         },
         onError: (error) => {
             console.error("Update Category Error:", error.response?.data || error.message);
-            // toast.error("Failed to update category"); // Handled in component for specific toast
         }
     });
 };
 
-// Delete Category (এটি ঠিক আছে, পরিবর্তনের প্রয়োজন নেই)
 export const useDeleteCategory = () => {
     const queryClient = useQueryClient();
 
@@ -58,7 +51,7 @@ export const useDeleteCategory = () => {
         },
         onError: (error) => {
             console.error("Delete Category Error:", error.response?.data || error.message);
-            toast.error("Failed to delete category");
+            ErrorToast("Failed to delete category");
         }
     });
 };

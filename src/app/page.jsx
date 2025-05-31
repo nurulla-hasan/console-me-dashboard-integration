@@ -6,27 +6,8 @@ import ConsultGrowthChart from "@/components/dashboard/ConsultGrowthChart";
 import UserGrowthChart from "@/components/dashboard/UserGrowthChart";
 import EarningGrowthChart from "@/components/dashboard/EarningGrowthChart";
 import PageContainer from "@/components/container/PageContainer";
-// import { useQuery, useQueryClient } from "@tanstack/react-query";
-// import { getLegal } from "@/lib/queries/getLegal";
 
 export default function Home() {
-
-
-
-  // const queryClient = useQueryClient();
-
-  // const {
-  //   data: legalData,
-  //   isLoading,
-  //   isError,
-  // } = useQuery({
-  //   queryKey: ["legal", "terms"],
-  //   queryFn: () => getLegal("terms"),
-  // });
-
-  // console.log(legalData)
-
-
 
 
   return (

@@ -130,7 +130,7 @@ const LoginFormContent = () => {
                 className="h-3 w-3 text-[#00A89D] accent-[#079891] cursor-pointer"
               />
               <label htmlFor="remember" className="ml-2 text-xs text-[#333333]">
-                Remember Password
+                Remember Password 
               </label>
             </div>
             <Link href="/auth/forgot-password" className="text-xs text-[#333333] hover:underline cursor-pointer">

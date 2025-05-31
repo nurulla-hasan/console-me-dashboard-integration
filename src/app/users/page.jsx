@@ -65,14 +65,14 @@ export const Users = () => {
               setPage(1);
               setQuery(e.target.value);
             }}
-            className="w-full pl-10 pr-4 py-2 rounded-md border border-[#00A89D] focus:outline-none"
+            className="w-full pl-10 pr-4 py-2 rounded-xs border border-[#00A89D] focus:outline-none"
           />
         </div>
       </motion.div>
 
       {/* Table */}
       <motion.div
-        className="overflow-auto h-[74vh] scrl-hide rounded-md border border-gray-200"
+        className="overflow-auto h-[73.5vh] scrl-hide rounded-md border border-gray-200"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}

@@ -8,4 +8,4 @@ export const getWithdrawRequest = async () => {
         console.error("Error fetching withdraw requests:", error);
         throw error;
     }
-}
+} 
