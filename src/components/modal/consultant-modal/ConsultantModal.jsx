@@ -6,14 +6,14 @@ const ConsultantModal = ({ showModal, selectedUser, handleReject, handleAccept }
     <AnimatePresence>
       {showModal && selectedUser && (
         <motion.div
-          className="fixed h-[100vh] inset-0 flex justify-center items-center bg-black/50 z-50"
+          className="fixed h-screen inset-0 flex justify-center items-center bg-black/50 z-50"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.1 }}
         >
           <motion.div
-            className="bg-white rounded-sm max-w-lg p-4"
+            className="bg-white rounded-sm p-4"
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0.8 }}
@@ -94,13 +94,13 @@ const ConsultantModal = ({ showModal, selectedUser, handleReject, handleAccept }
             <div className="flex justify-between gap-8 px-6">
               <button
                 onClick={handleReject}
-                className="border text-black text-sm py-1 w-full rounded-sm cursor-pointer"
+                className="border text-black text-sm py-2 w-full rounded-xs cursor-pointer"
               >
                 Decline
               </button>
               <button
                 onClick={() => handleAccept(selectedUser?._id)}
-                className="bg-teal-600 text-white text-sm py-1 w-full rounded-sm cursor-pointer"
+                className="bg-teal-600 text-white text-sm py-2 w-full rounded-xs cursor-pointer"
               >
                 {
                   selectedUser.account_status === "Banned" ? "Unblock" : "Block"

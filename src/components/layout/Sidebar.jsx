@@ -59,7 +59,7 @@ const Sidebar = ({ isHideLayout, menuItems, setSettingsOpen, settingsOpen, setti
                         <div>
                             <button
                                 onClick={() => setSettingsOpen(!settingsOpen)}
-                                className={`w-full cursor-pointer text-left px-4 py-2 rounded-sm text-[#00A89D] flex justify-between items-center transition-all duration-300 ${settingsOpen ? "bg-[#058279] text-white" : "bg-[#FEFEFE]"}`}
+                                className={`w-full cursor-pointer text-left px-4 py-3 rounded-sm text-[#00A89D] flex justify-between items-center transition-all duration-300 ${settingsOpen ? "bg-[#058279] text-white" : "bg-[#FEFEFE]"}`}
                             >
                                 <p className='flex items-center gap-2 text-sm'>
                                     <LuSettings size={20} />

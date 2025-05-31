@@ -17,12 +17,13 @@ const PaymentModal = ({ showModal, selectedWithdrawRequest, handleClose, handleS
         return null;
     }
 
-    const requestId = selectedWithdrawRequest._id;
+    const requestId = selectedWithdrawRequest._id; 
     const userName = selectedWithdrawRequest.user?.name || "Unknown User";
     const userEmail = selectedWithdrawRequest.user?.email || "N/A";
     const userService = selectedWithdrawRequest.user?.service?.name || "N/A";
     const userLocation = `${selectedWithdrawRequest.user?.city || 'N/A'}, ${selectedWithdrawRequest.user?.country || 'N/A'}`;
     const amount = selectedWithdrawRequest.amount || 0;
+    const destinationId = selectedWithdrawRequest.user?.service?._id;
     const currentStatus = selectedWithdrawRequest.status;
 
     const isFinalized = currentStatus === "completed" || currentStatus === "failed";
@@ -30,7 +31,7 @@ const PaymentModal = ({ showModal, selectedWithdrawRequest, handleClose, handleS
     const handleActionClick = async (statusToUpdate) => {
         setActionLoadingStatus(statusToUpdate);
         try {
-            await handleStatusUpdate(requestId, statusToUpdate);
+            await handleStatusUpdate(requestId, statusToUpdate, amount, destinationId);
         } catch (error) {
             setActionLoadingStatus(null);
         }
@@ -103,7 +104,7 @@ const PaymentModal = ({ showModal, selectedWithdrawRequest, handleClose, handleS
                             >
                                 {actionLoadingStatus === "failed" && isUpdatingStatus ? (
                                     <div className="flex items-center justify-center gap-2">
-                                        <ImSpinner9 size={16} className="animate-spin" /> Declining...
+                                        <ImSpinner9 size={20} className="animate-spin" /> Declining...
                                     </div>
                                 ) : "Decline"}
                             </button>
@@ -119,7 +120,7 @@ const PaymentModal = ({ showModal, selectedWithdrawRequest, handleClose, handleS
                             >
                                 {actionLoadingStatus === "completed" && isUpdatingStatus ? (
                                     <div className="flex items-center justify-center gap-2">
-                                        <ImSpinner9 size={16} className="animate-spin" /> Accepting...
+                                        <ImSpinner9 size={20} className="animate-spin" /> Accepting...
                                     </div>
                                 ) : "Accept"}
                             </button>

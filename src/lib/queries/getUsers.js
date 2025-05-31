@@ -1,7 +1,15 @@
 import { api } from "../api/axiosInstance";
-export const getUsers = async (pageNumber = 1, query = '') => {
+export const getUsers = async (pageNumber = 1, query = "") => {
   try {
-    const res = await api.get(`/admin/users?page=${pageNumber}&limit=10&search=${query}`,);
+    const res = await api.get(`/admin/users`,
+      {
+        params:{
+          page: pageNumber,
+          limit: 10,
+          query: query
+        },
+      }
+    );
 
     const { data, meta } = res.data;
 
@@ -16,4 +24,4 @@ export const getUsers = async (pageNumber = 1, query = '') => {
     throw error;
   }
 };
-  
+   

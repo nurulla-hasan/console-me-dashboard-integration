@@ -1,7 +1,15 @@
 import { api } from "../api/axiosInstance";
-export const getConsultants = async ({ page = 1, search = "" }) => {
+export const getConsultants = async (pageNumber = 1, query = "") => {
   try {
-    const res = await api.get(`/admin/users/consultants?page=${page}&limit=10&search=${search}`);
+    const res = await api.get(`/admin/users/consultants`,
+      {
+        params: {
+          page: pageNumber,
+          limit: 10,
+          query: query
+        }
+      }
+    );
 
     const { data, meta } = res.data;
 

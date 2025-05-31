@@ -3,6 +3,7 @@ import { FaRegImage } from 'react-icons/fa';
 import { MdOutlineArrowBack } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from 'react';
+import { ImSpinner9 } from "react-icons/im";
 
 const CategoryModal = ({
     setIsModalOpen,
@@ -12,8 +13,9 @@ const CategoryModal = ({
     categoryName,
     handleIconUpload,
     handleSubmit,
-    categoryIcon, // এটি এখন একটি ফাইল অবজেক্ট বা null হবে
-    originalCategoryIconUrl // এডিট মোডের জন্য পুরনো URL
+    categoryIcon,
+    originalCategoryIconUrl,
+    isSubmitting
 }) => {
     const [previewIconUrl, setPreviewIconUrl] = useState(null);
 
@@ -23,14 +25,12 @@ const CategoryModal = ({
             const url = URL.createObjectURL(categoryIcon);
             setPreviewIconUrl(url);
             return () => URL.revokeObjectURL(url); // Clean up URL
-        } else if (editMode && originalCategoryIconUrl) {
-            // যদি এডিট মোড হয় এবং নতুন ফাইল সিলেক্ট না হয় (categoryIcon === null),
-            // তাহলে পুরনো URL ব্যবহার করুন।
+        } else if (editMode && originalCategoryIconUrl && !categoryIcon) {
             setPreviewIconUrl(originalCategoryIconUrl);
         } else {
-            setPreviewIconUrl(null); // অন্যথায় প্রিভিউ খালি রাখুন
+            setPreviewIconUrl(null);
         }
-    }, [categoryIcon, editMode, originalCategoryIconUrl]); // Dependency array তে originalCategoryIconUrl যোগ করা হয়েছে
+    }, [categoryIcon, editMode, originalCategoryIconUrl]);
 
     return (
         <AnimatePresence>
@@ -69,6 +69,7 @@ const CategoryModal = ({
                                 onChange={(e) => setCategoryName(e.target.value)}
                                 className="w-full border border-[#00A89D] px-3 py-2 rounded outline-none"
                                 placeholder="Enter category name"
+                                disabled={isSubmitting} 
                             />
                         </div>
                         <div className="mb-4 relative">
@@ -81,6 +82,7 @@ const CategoryModal = ({
                                 onChange={handleIconUpload}
                                 className="w-full border border-[#00A89D] px-3 py-2 rounded outline-none cursor-pointer text-[15px] text-[#3333339b]"
                                 id="icon-upload"
+                                disabled={isSubmitting} 
                             />
                             {previewIconUrl && (
                                 <img
@@ -98,9 +100,17 @@ const CategoryModal = ({
 
                         <button
                             onClick={handleSubmit}
-                            className="bg-[#00A89D] text-white w-full py-2 rounded font-medium cursor-pointer"
+                            className="bg-[#00A89D] text-white w-full py-2 rounded font-medium cursor-pointer flex items-center justify-center gap-2" // flex, items-center, justify-center, gap-2 যোগ করা হয়েছে
+                            disabled={isSubmitting}
                         >
-                            {editMode ? "Update" : "Add Category"}
+                            {isSubmitting ? (
+                                <>
+                                    <ImSpinner9 size={20} className="animate-spin" />
+                                    {editMode ? "Updating..." : "Adding..."}
+                                </>
+                            ) : (
+                                editMode ? "Update" : "Add Category"
+                            )}
                         </button>
                     </motion.div>
                 </motion.div>

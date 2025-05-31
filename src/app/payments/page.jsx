@@ -9,47 +9,48 @@ import Loading from "@/components/loading/Loading";
 import Error from "@/components/error/Error";
 import { FiSearch } from "react-icons/fi";
 import { motion } from "framer-motion";
-
 import { getWithdrawRequest } from "@/lib/queries/getWithdrawRequest";
 import { updateWithdrawRequestStatus } from "@/lib/mutations/updateWithdrawRequestStatus";
-import { ErrorToast, SuccessToast } from '@/utils/ValidationToast';
+import { SuccessToast, ErrorToast } from '@/utils/ValidationToast';
+import { useTransferFunds } from "@/hooks/useTransferFunds";
+import NoData from '@/components/no-data/NoData';
 
-export default function Payments() {
+export const Payments = () => {
   const queryClient = useQueryClient();
-
   const pageSize = 8;
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
-
   const [showModal, setShowModal] = useState(false);
   const [selectedWithdrawRequest, setSelectedWithdrawRequest] = useState(null);
-
+  // Fetch all withdraw requests
   const {
     data: withdrawRequestsApiResponse,
     isLoading: isLoadingRequests,
     isError: isErrorRequests,
-    error: requestsError,
   } = useQuery({
     queryKey: ["withdrawRequests"],
     queryFn: getWithdrawRequest,
     staleTime: 5 * 60 * 1000,
   });
+  const allWithdrawRequests = withdrawRequestsApiResponse?.data || [];
 
+  // Mutation for updating withdraw request status
   const updateStatusMutation = useMutation({
     mutationFn: updateWithdrawRequestStatus,
     onSuccess: (data) => {
-      SuccessToast(data.message || "Withdraw request status updated successfully!");
-      queryClient.invalidateQueries({ queryKey: ['withdrawRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['withdrawRequests'] }); 
       setShowModal(false);
       setSelectedWithdrawRequest(null);
     },
     onError: (error) => {
+      console.error("Error updating withdraw request status:", error);
       ErrorToast(error.response?.data?.message || error.message || "Failed to update withdraw request status.");
     },
   });
+  // Mutation for transferring funds when a request is completed
+  const transferFundsMutation = useTransferFunds(); 
 
-  const allWithdrawRequests = withdrawRequestsApiResponse?.data || [];
-
+  // Client-side Filtering Logic
   const filteredRequests = useMemo(() => {
     if (!query) {
       return allWithdrawRequests;
@@ -67,7 +68,7 @@ export default function Payments() {
       String(request.amount).includes(lowerCaseQuery)
     );
   }, [allWithdrawRequests, query]);
-
+  // Client-side Pagination Logic
   const totalItems = filteredRequests.length;
   const pageCount = Math.ceil(totalItems / pageSize);
   const pagedRequests = useMemo(() => {
@@ -86,8 +87,27 @@ export default function Payments() {
     setSelectedWithdrawRequest(null);
   };
 
-  const handleStatusUpdate = (id, status) => {
+  const handleStatusUpdate = async (id, status, amount, destinationAccountId) => {
     updateStatusMutation.mutate({ id, status });
+
+    if (status === "completed") {
+      if (amount && destinationAccountId) {
+        try {
+          const amountInCents = amount;
+          await transferFundsMutation.mutateAsync({
+            amountCents: amountInCents,
+            destinationAccountId: destinationAccountId,
+          });
+          SuccessToast("Funds transfer initiated successfully!");
+        } catch (transferError) {
+          console.error("Error initiating fund transfer:", transferError);
+          ErrorToast(transferError.response?.data?.message || transferError.message || "Failed to initiate fund transfer.");
+        }
+      } else {
+        console.error("Cannot transfer funds: Missing amount or destinationAccountId for completed request.");
+        ErrorToast("Funds transfer failed: Missing crucial payment details.");
+      }
+    }
   };
 
   return (
@@ -124,12 +144,23 @@ export default function Payments() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        {isLoadingRequests ? (
+        {isLoadingRequests ? ( 
           <Loading />
         ) : isErrorRequests ? (
           <Error itemName="withdraw requests" />
         ) : (
-          <PaymentsTable pagedRequests={pagedRequests} handleModalOpen={handleModalOpen} />
+          <>
+            {pagedRequests.length === 0 ? ( 
+              <div className="flex justify-center items-center">
+                <NoData/>
+              </div>
+            ) : (
+              <PaymentsTable
+                pagedRequests={pagedRequests}
+                handleModalOpen={handleModalOpen}
+              />
+            )}
+          </>
         )}
       </motion.div>
 
@@ -138,11 +169,11 @@ export default function Payments() {
         selectedWithdrawRequest={selectedWithdrawRequest}
         handleClose={handleModalClose}
         handleStatusUpdate={handleStatusUpdate}
-        isUpdatingStatus={updateStatusMutation.isPending}
+        isUpdatingStatus={updateStatusMutation.isPending || transferFundsMutation.isPending} 
       />
 
       {/* pagination */}
-      {!isLoadingRequests && !isErrorRequests && totalItems > 0 && (
+      {isLoadingRequests && !isErrorRequests && totalItems > 0 && (
         <motion.div
           className="flex justify-evenly items-center text-sm mt-4"
           initial={{ opacity: 0, y: 10 }}
@@ -160,3 +191,5 @@ export default function Payments() {
     </PageContainer>
   );
 }
+
+export default Payments;

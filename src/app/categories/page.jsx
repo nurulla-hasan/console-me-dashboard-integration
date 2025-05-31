@@ -11,7 +11,6 @@ import {
   useUpdateCategory,
   useDeleteCategory,
 } from "@/hooks/useCategoryMutations";
-import toast from "react-hot-toast";
 import NoData from "@/components/no-data/NoData";
 import Loading from "@/components/loading/Loading";
 import { getCategories } from "@/lib/queries/getCategories";
@@ -19,9 +18,11 @@ import Error from "@/components/error/Error";
 import { ErrorToast, SuccessToast } from "@/utils/ValidationToast";
 
 export default function CategoryManagement() {
-  const { mutate: addCategory } = useAddCategory();
-  const { mutate: updateCategory } = useUpdateCategory();
-  const { mutate: deleteCategory } = useDeleteCategory();
+  const [deletingCategoryId, setDeletingCategoryId] = useState(null);
+
+  const { mutate: addCategory, isPending: isAddingCategory } = useAddCategory();
+  const { mutate: updateCategory, isPending: isUpdatingCategory } = useUpdateCategory();
+  const { mutate: deleteCategory, isPending: isDeleting } = useDeleteCategory();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -59,13 +60,25 @@ export default function CategoryManagement() {
 
   // delete
   const handleDelete = (category) => {
+    if (isDeleting) return;
+    setDeletingCategoryId(category._id);
+
     deleteCategory(category._id, {
-      onSuccess: () => toast.success("Category deleted!"),
-      onError: () => toast.error("Failed to delete category"),
+      onSuccess: () => {
+        SuccessToast("Category deleted!");
+        setDeletingCategoryId(null);
+      },
+      onError: (error) => {
+        console.error("Delete error:", error);
+        ErrorToast(error.response?.data?.message || error.message || "Failed to delete category");
+        setDeletingCategoryId(null);
+      },
     });
   };
 
   const handleSubmit = () => {
+    if (isAddingCategory || isUpdatingCategory) return; 
+
     if (!categoryName) {
       ErrorToast("Category name is required");
       return;
@@ -77,24 +90,23 @@ export default function CategoryManagement() {
     if (editMode && editCategoryId) {
       formData.append("id", editCategoryId);
 
-
       if (categoryIcon instanceof File) {
         formData.append("icon", categoryIcon);
       }
 
       updateCategory(formData, {
         onSuccess: () => {
-          toast.success("Category updated!");
+          SuccessToast("Category updated!");
           setIsModalOpen(false);
         },
         onError: (error) => {
           console.error("Update error:", error.response?.data || error.message);
-          toast.error(error.response?.data?.message || "Failed to update category");
+          ErrorToast(error.response?.data?.message || "Failed to update category");
         },
       });
-    } else { 
-      if (!categoryIcon instanceof File) {
-        toast.error("Category icon is required");
+    } else {
+      if (!categoryIcon) {
+        ErrorToast("Category icon is required");
         return;
       }
       formData.append("icon", categoryIcon);
@@ -147,7 +159,7 @@ export default function CategoryManagement() {
           <Error itemName={'categories'} />
         ) : categories.length === 0 ? (
           <div className="mb-4">
-            <NoData />
+            <NoData message="No categories available yet." />
           </div>
         ) : (
           <motion.div
@@ -167,6 +179,7 @@ export default function CategoryManagement() {
                   handleEdit={handleEdit}
                   handleDelete={handleDelete}
                   category={category}
+                  isDeleting={isDeleting && category._id === deletingCategoryId}
                 />
               </motion.div>
             ))}
@@ -184,6 +197,7 @@ export default function CategoryManagement() {
         handleSubmit={handleSubmit}
         categoryIcon={categoryIcon}
         originalCategoryIconUrl={originalCategoryIconUrl}
+        isSubmitting={isAddingCategory || isUpdatingCategory}
       />
     </PageContainer>
   );

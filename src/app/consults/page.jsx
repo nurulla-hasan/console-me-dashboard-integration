@@ -1,5 +1,5 @@
+// app/dashboard/admin/consults/page.jsx
 "use client";
-
 import PageContainer from "@/components/container/PageContainer";
 import ConsultantModal from "@/components/modal/consultant-modal/ConsultantModal";
 import Pagination from "@/components/pagination/Pagination";
@@ -7,13 +7,14 @@ import ConsultTable from "@/components/table/consult-table/ConsultTable";
 import { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { motion } from "framer-motion";
-import { useConsultants } from "@/hooks/useConsultants";
 import Loading from "@/components/loading/Loading";
 import NoData from "@/components/no-data/NoData";
 import { useBlockConsult } from "@/hooks/useBlockConsult";
 import Error from "@/components/error/Error";
+import { getConsultants } from "@/lib/queries/getConsultants";
+import { useQuery } from "@tanstack/react-query";
 
-export default function Consults() {
+export const Consults = () => {
   const pageSize = 10;
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
@@ -22,36 +23,44 @@ export default function Consults() {
 
   const [blockingUserId, setBlockingUserId] = useState(null);
 
-  const { data, isLoading, isError } = useConsultants({ page, search: query });
-
-  const handleModalOpen = (user) => {
-    setSelectedUser(user);
-    setShowModal(true);
-  };
-
-  const { mutate: handleAccept, isPending } = useBlockConsult();
-  const onBlockClick = (id) => {
-    setBlockingUserId(id);
-    handleAccept(id);
-    setShowModal(false);
-  };
-
-  console.log(isPending)
-
-  const handleReject = () => {
-    setShowModal(false);
-  };
+  // Get consultants and pagination
+  const {
+    data,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["consultants", page, query],
+    queryFn: () => getConsultants(page, query),
+    keepPreviousData: true,
+  });
 
   const consultants = data?.consultants || [];
   const total = data?.totalConsultants || 0;
   const pageCount = data?.totalPages || 1;
 
 
+  const handleModalOpen = (user) => {
+    setSelectedUser(user);
+    setShowModal(true);
+  };
+
+  const { mutate: handleBlockUser, isPending: isBlockingPending } = useBlockConsult();
+  const onBlockClick = (id) => {
+    setBlockingUserId(id);
+    handleBlockUser(id);
+    setShowModal(false);
+  };
+
+  const handleReject = () => {
+    setShowModal(false);
+  };
+
   useEffect(() => {
-    if (!isPending && blockingUserId) {
+    if (!isBlockingPending && blockingUserId) {
       setBlockingUserId(null);
     }
-  }, [isPending, blockingUserId]);
+  }, [isBlockingPending, blockingUserId]);
+
 
   return (
     <PageContainer>
@@ -67,11 +76,11 @@ export default function Consults() {
           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <input
             placeholder="Search here..."
-            // value={query}
-            // onChange={(e) => {
-            //   setPage(1);
-            //   setQuery(e.target.value);
-            // }}
+            value={query}
+            onChange={(e) => {
+              setPage(1);
+              setQuery(e.target.value);
+            }}
             className="w-full pl-10 pr-4 py-2 rounded-xs border border-[#00A89D] focus:outline-none"
           />
         </div>
@@ -87,14 +96,21 @@ export default function Consults() {
         {isLoading ? (
           <Loading />
         ) : isError ? (
-          <Error itemName='consult' />
-        ) : consultants.length === 0 ? (
-          <NoData />
+          <Error itemName='consultants' />
         ) : (
-          <ConsultTable
-            paged={consultants}
-            handleModalOpen={handleModalOpen}
-            currentlyBlockingUserId={blockingUserId} />
+          <>
+            {consultants.length === 0 ? (
+                <div className="flex justify-center items-center">
+                    <NoData message={query ? `No consultants found for "${query}"` : "No consultants available yet."} />
+                </div>
+            ) : (
+              <ConsultTable
+                paged={consultants}
+                handleModalOpen={handleModalOpen}
+                currentlyBlockingUserId={blockingUserId}
+              />
+            )}
+          </>
         )}
       </motion.div>
 
@@ -107,7 +123,7 @@ export default function Consults() {
       />
 
       {/* pagination */}
-      {!isLoading && consultants.length > 0 && (
+      {!isLoading && !isError && consultants > 0 && (
         <motion.div
           className="flex justify-evenly items-center text-sm mt-4"
           initial={{ opacity: 0, y: 10 }}
@@ -125,3 +141,5 @@ export default function Consults() {
     </PageContainer>
   );
 }
+
+export default Consults;

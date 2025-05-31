@@ -41,7 +41,7 @@ const UserTable = ({ users, onBlockClick, currentlyBlockingUserId }) => {
                                             } `}
                                     >
                                         {
-                                            isBlockingThisUser ? <ImSpinner9 size={16} className="animate-spin" /> : user?.account_status === "Banned" ? "Unblock" : "Block"
+                                            isBlockingThisUser ? <ImSpinner9 size={20} className="animate-spin" /> : user?.account_status === "Banned" ? "Unblock" : "Block"
                                         }
                                     </button>
                                 </td>

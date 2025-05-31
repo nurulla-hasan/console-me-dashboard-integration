@@ -11,25 +11,29 @@ import { getUsers } from "@/lib/queries/getUsers";
 import { useBlockUser } from "@/hooks/useBlockUser";
 import Loading from "@/components/loading/Loading";
 import Error from "@/components/error/Error";
+import NoData from "@/components/no-data/NoData";
 
 export const Users = () => {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(""); 
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
-  const [blockingUserId, setBlockingUserId] = useState(null); 
+  const [blockingUserId, setBlockingUserId] = useState(null);
 
   // Get users and pagination
   const {
-    data = { users: [], totalUsers: 0, totalPages: 1, currentPage: 1 },
-    isLoading,
+    data,
+    isLoading, 
     isError,
   } = useQuery({
     queryKey: ["users", page, query],
     queryFn: () => getUsers(page, query),
-    keepPreviousData: true,
+    keepPreviousData: true, 
   });
-  const { users, totalUsers, totalPages } = data;
+
+  const users = data?.users || [];
+  const totalUsers = data?.totalUsers || 0;
+  const totalPages = data?.totalPages || 1;
 
   // Toggle User Block and Unblock
   const { mutate: handleBlockUser, isPending } = useBlockUser();
@@ -77,21 +81,28 @@ export const Users = () => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        {isLoading ? (
+        {isLoading ? ( 
           <Loading />
-        ) : isError ? (
+        ) : isError ? ( 
           <Error itemName='users' />
         ) : (
-          <UserTable
-            users={users}
-            onBlockClick={onBlockClick} 
-            currentlyBlockingUserId={blockingUserId}
-          />
+          <>
+            {users.length === 0 ? (
+                <div className="flex justify-center items-center"><NoData/></div>
+            ) : (
+              <UserTable
+                users={users}
+                onBlockClick={onBlockClick}
+                currentlyBlockingUserId={blockingUserId}
+              />
+            )}
+          </>
         )}
       </motion.div>
 
       {/* Pagination */}
-      {!isLoading && !isError && (
+      {/* Show pagination only if not loading, not fetching, no error, and there are users */}
+      {!isLoading && !isError && users.length > 0 && ( // users.length > 0 যোগ করা হয়েছে
         <motion.div
           className="flex justify-evenly items-center text-sm mt-4"
           initial={{ opacity: 0, y: 10 }}
