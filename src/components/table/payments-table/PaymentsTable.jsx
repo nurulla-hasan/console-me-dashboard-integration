@@ -54,7 +54,7 @@ const PaymentsTable = ({ pagedRequests, handleModalOpen }) => {
                                                 : "bg-yellow-50 text-yellow-700 border border-yellow-500 hover:bg-yellow-100 hover:border-yellow-600"
                                         }`}
                                 >
-                                    {request.status === "completed" ? "✅ Completed" : request.status === "failed" ? "❌ Failed" : "💸 Request"}
+                                    {request.status === "completed" ? "✅ Paid" : request.status === "failed" ? "❌ Failed" : "💸 Requested"}
                                 </button>
                             </td>
                         </tr>

@@ -20,7 +20,7 @@ export const Users = () => {
 
   const [blockingUserId, setBlockingUserId] = useState(null);
 
-  // Get users and pagination
+  // Get users and pagination 
   const {
     data,
     isLoading, 

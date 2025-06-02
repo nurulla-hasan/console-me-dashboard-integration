@@ -1,4 +1,5 @@
 import { api } from "../api/axiosInstance";
+
 export const getConsultants = async (pageNumber = 1, query = "") => {
   try {
     const res = await api.get(`/admin/users/consultants`,
@@ -19,9 +20,9 @@ export const getConsultants = async (pageNumber = 1, query = "") => {
       currentPage: meta.currentPage,
       totalConsultants: meta.totalUsers,
     };
+
   } catch (error) {
     console.error("Error fetching users:", error);
     throw error;
   }
 };
-   

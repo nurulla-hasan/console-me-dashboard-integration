@@ -2,12 +2,12 @@
 
 import dynamic from "next/dynamic";
 import { useRef, useEffect, useState } from "react";
-import { CgSpinnerTwo } from "react-icons/cg";
 import { ErrorToast, SuccessToast } from "@/utils/ValidationToast";
 import { getLegal } from "@/lib/queries/getLegal";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { updateLegal } from "@/lib/mutations/updateLegal";
 import Loading from "@/components/loading/Loading";
+import { ImSpinner9 } from "react-icons/im";
 
 // Dynamically import JoditEditor (SSR off)
 const JoditEditor = dynamic(() => import("jodit-react"), {
@@ -88,11 +88,11 @@ const AboutUs = () => {
                 <button
                     onClick={handleSubmit}
                     disabled={isSaving}
-                    className="px-8 bg-teal-500 hover:bg-teal-600 text-white py-2 rounded-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-8 bg-teal-500 hover:bg-teal-600 text-white py-2 rounded-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isSaving ? (
                         <div className="flex gap-2 items-center">
-                            <CgSpinnerTwo className="animate-spin" fontSize={16} />
+                            <ImSpinner9 size={20} className="animate-spin"/>
                             Processing...
                         </div>
                     ) : (

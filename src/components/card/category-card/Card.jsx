@@ -4,7 +4,7 @@ import { ImSpinner9 } from "react-icons/im";
 const Card = ({ handleDelete, handleEdit, category, isDeleting}) => {
     return (
         <>
-            <div className="bg-white p-4 rounded shadow flex flex-col justify-center items-center h-fit">
+            <div className="bg-white p-4 rounded-xs shadow flex flex-col justify-center items-center h-fit">
                 <Image
                     src={category?.icon_url}
                     alt={category.name}
@@ -16,14 +16,14 @@ const Card = ({ handleDelete, handleEdit, category, isDeleting}) => {
                 <div className="flex justify-center gap-2 mt-2">
                     <button
                         onClick={() => handleDelete(category)}
-                        className="border border-teal-400 text-sm px-3 py-1 rounded text-teal-500 cursor-pointer"
+                        className="border border-teal-400 text-sm px-3 py-1 rounded-xs text-teal-500 cursor-pointer"
                     >
                         {isDeleting ? <ImSpinner9 size={20} className="animate-spin"/> : "Delete"}
                         
                     </button>
                     <button
                         onClick={() => handleEdit(category)}
-                        className="bg-teal-500 text-white text-sm px-3 py-1 rounded cursor-pointer"
+                        className="bg-teal-500 text-white text-sm px-3 py-1 rounded-xs cursor-pointer"
                     >
                         Edit
                     </button>

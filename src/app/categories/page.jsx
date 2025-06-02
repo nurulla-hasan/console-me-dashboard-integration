@@ -143,7 +143,7 @@ export default function CategoryManagement() {
           Category Management
         </h1>
         <button
-          className="bg-teal-500 text-white px-4 py-2 rounded flex items-center gap-1 cursor-pointer"
+          className="bg-teal-500 text-white px-4 py-2 rounded-xs flex items-center gap-1 cursor-pointer"
           onClick={handleAddNewModal}
         >
           <HiOutlinePlusSm size={20} color="#ffffff" />
@@ -151,7 +151,7 @@ export default function CategoryManagement() {
         </button>
       </motion.div>
 
-      <div className="flex flex-col justify-between h-[79vh]">
+      <div className="flex flex-col justify-between h-[78.5vh] overflow-auto scrl-hide">
         {/* Loader / Error / No Data */}
         {isLoading ? (
           <Loading />

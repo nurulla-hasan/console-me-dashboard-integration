@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import PageContainer from "@/components/container/PageContainer";
 import Pagination from "@/components/pagination/Pagination";
@@ -17,28 +17,34 @@ import NoData from '@/components/no-data/NoData';
 
 export const Payments = () => {
   const queryClient = useQueryClient();
-  const pageSize = 8;
   const [page, setPage] = useState(1);
-  const [query, setQuery] = useState("");
+  // const [query, setQuery] = useState("");
+
   const [showModal, setShowModal] = useState(false);
   const [selectedWithdrawRequest, setSelectedWithdrawRequest] = useState(null);
+
   // Fetch all withdraw requests
   const {
-    data: withdrawRequestsApiResponse,
+    data: withdrawRequestsData,
     isLoading: isLoadingRequests,
     isError: isErrorRequests,
   } = useQuery({
-    queryKey: ["withdrawRequests"],
-    queryFn: getWithdrawRequest,
+    queryKey: ["withdrawRequests", page],
+    queryFn: () => getWithdrawRequest(page), 
     staleTime: 5 * 60 * 1000,
   });
-  const allWithdrawRequests = withdrawRequestsApiResponse?.data || [];
+
+  const allWithdrawRequests = withdrawRequestsData?.withdrawRequests || []; 
+  const currentPage = withdrawRequestsData?.currentPage || 1;
+  const totalPages = withdrawRequestsData?.totalPages || 1;
+  const totalwithdrawRequests = withdrawRequestsData?.totalwithdrawRequest || 0;
 
   // Mutation for updating withdraw request status
   const updateStatusMutation = useMutation({
     mutationFn: updateWithdrawRequestStatus,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['withdrawRequests'] }); 
+      queryClient.invalidateQueries({ queryKey: ['withdrawRequests', page] });
+      SuccessToast("Withdraw request status updated successfully!");
       setShowModal(false);
       setSelectedWithdrawRequest(null);
     },
@@ -47,34 +53,8 @@ export const Payments = () => {
       ErrorToast(error.response?.data?.message || error.message || "Failed to update withdraw request status.");
     },
   });
-  // Mutation for transferring funds when a request is completed
-  const transferFundsMutation = useTransferFunds(); 
 
-  // Client-side Filtering Logic
-  const filteredRequests = useMemo(() => {
-    if (!query) {
-      return allWithdrawRequests;
-    }
-    const lowerCaseQuery = query.toLowerCase();
-    return allWithdrawRequests.filter(request =>
-      request.user?.name?.toLowerCase().includes(lowerCaseQuery) ||
-      request.user?.email?.toLowerCase().includes(lowerCaseQuery) ||
-      request.user?.phone?.includes(lowerCaseQuery) ||
-      request.user?.service?.name?.toLowerCase().includes(lowerCaseQuery) ||
-      request.user?.city?.toLowerCase().includes(lowerCaseQuery) ||
-      request.user?.country?.toLowerCase().includes(lowerCaseQuery) ||
-      request._id.toLowerCase().includes(lowerCaseQuery) ||
-      request.status.toLowerCase().includes(lowerCaseQuery) ||
-      String(request.amount).includes(lowerCaseQuery)
-    );
-  }, [allWithdrawRequests, query]);
-  // Client-side Pagination Logic
-  const totalItems = filteredRequests.length;
-  const pageCount = Math.ceil(totalItems / pageSize);
-  const pagedRequests = useMemo(() => {
-    const startIndex = (page - 1) * pageSize;
-    return filteredRequests.slice(startIndex, startIndex + pageSize);
-  }, [filteredRequests, page, pageSize]);
+  const transferFundsMutation = useTransferFunds();
 
   // Modal Handling Functions
   const handleModalOpen = (withdraw) => {
@@ -108,6 +88,9 @@ export const Payments = () => {
         ErrorToast("Funds transfer failed: Missing crucial payment details.");
       }
     }
+    if (status === "failed") {
+      SuccessToast("Successfully Declined");
+    }
   };
 
   return (
@@ -123,7 +106,7 @@ export const Payments = () => {
           <h1 className="text-xl font-medium">Payment Withdraw Requests</h1>
         </div>
 
-        <div className="relative w-72">
+        {/* <div className="relative w-72">
           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <input
             placeholder="Search here..."
@@ -134,29 +117,29 @@ export const Payments = () => {
             }}
             className="w-full pl-10 pr-4 py-2 rounded-xs border border-[#00A89D] focus:outline-none"
           />
-        </div>
+        </div> */}
       </motion.div>
 
       {/* table */}
       <motion.div
-        className="overflow-auto h-[73.5vh] scrl-hide rounded-md border border-gray-200"
+        className="overflow-auto h-[75vh] scrl-hide rounded-md border border-gray-200"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        {isLoadingRequests ? ( 
+        {isLoadingRequests ? (
           <Loading />
         ) : isErrorRequests ? (
           <Error itemName="withdraw requests" />
         ) : (
           <>
-            {pagedRequests.length === 0 ? ( 
+            {allWithdrawRequests.length === 0 ? (
               <div className="flex justify-center items-center">
-                <NoData/>
+                <NoData />
               </div>
             ) : (
               <PaymentsTable
-                pagedRequests={pagedRequests}
+                pagedRequests={allWithdrawRequests}
                 handleModalOpen={handleModalOpen}
               />
             )}
@@ -169,11 +152,11 @@ export const Payments = () => {
         selectedWithdrawRequest={selectedWithdrawRequest}
         handleClose={handleModalClose}
         handleStatusUpdate={handleStatusUpdate}
-        isUpdatingStatus={updateStatusMutation.isPending || transferFundsMutation.isPending} 
+        isUpdatingStatus={updateStatusMutation.isPending || transferFundsMutation.isPending}
       />
 
       {/* pagination */}
-      {isLoadingRequests && !isErrorRequests && totalItems > 0 && (
+      {!isLoadingRequests && !isErrorRequests && totalwithdrawRequests > 0 && (
         <motion.div
           className="flex justify-evenly items-center text-sm mt-4"
           initial={{ opacity: 0, y: 10 }}
@@ -181,15 +164,19 @@ export const Payments = () => {
           transition={{ delay: 0.4, duration: 0.4 }}
         >
           <span className="text-[#00A89D]">
-            Showing {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalItems)} of {totalItems}
+            Showing {(currentPage - 1) * 10 + 1}–{Math.min(currentPage * 10, totalwithdrawRequests)} of {totalwithdrawRequests}
           </span>
           <div className="flex items-center gap-2">
-            <Pagination page={page} setPage={setPage} pageCount={pageCount} />
+            <Pagination
+              page={currentPage}
+              setPage={setPage}
+              pageCount={totalPages}
+            />
           </div>
         </motion.div>
       )}
     </PageContainer>
   );
-}
+};
 
 export default Payments;

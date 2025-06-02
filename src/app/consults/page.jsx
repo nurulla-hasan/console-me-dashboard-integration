@@ -114,7 +114,7 @@ export const Consults = () => {
         )}
       </motion.div>
 
-      {/* Modal ----------------------------------------------------------*/}
+      {/* Modal ----------------------------------------------------------*/} 
       <ConsultantModal
         showModal={showModal}
         selectedUser={selectedUser}
