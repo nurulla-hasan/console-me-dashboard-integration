@@ -1,6 +1,8 @@
+import { ImSpinner9 } from "react-icons/im";
 
 
-const EditProfiletab = ({activeTab, handleSubmit, onSubmitProfile, register, user}) => {
+const EditProfiletab = ({activeTab, handleSubmit, onSubmitProfile, register, user, loading}) => {
+    console.log(loading)
     return ( 
         <>
             {activeTab === 'profile' && (
@@ -51,8 +53,10 @@ const EditProfiletab = ({activeTab, handleSubmit, onSubmitProfile, register, use
                     </div>
 
                     <div className='w-full text-center'>
-                        <button type="submit" className="mt-4 px-8 bg-teal-500 hover:bg-teal-600 text-white py-2 rounded-md cursor-pointer">
-                            Save Changes
+                        <button type="submit" disabled={loading} className="disabled:cursor-not-allowed mt-4 px-8 bg-teal-500 hover:bg-teal-600 text-white py-2 rounded-xs cursor-pointer">
+                            {
+                                loading ? <ImSpinner9 size={20} className="animate-spin"/> : 'Save Changes'
+                            }
                         </button>
                     </div>
                 </form>

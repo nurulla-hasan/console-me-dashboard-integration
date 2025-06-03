@@ -20,7 +20,7 @@ export const Consults = () => {
   const [query, setQuery] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
-
+ 
   const [blockingUserId, setBlockingUserId] = useState(null);
 
   // Get consultants and pagination
@@ -123,7 +123,7 @@ export const Consults = () => {
       />
 
       {/* pagination */}
-      {!isLoading && !isError && consultants > 0 && (
+      {!isLoading && !isError && consultants.length > 0 && (
         <motion.div
           className="flex justify-evenly items-center text-sm mt-4"
           initial={{ opacity: 0, y: 10 }}

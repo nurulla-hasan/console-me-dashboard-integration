@@ -19,6 +19,9 @@ const Page = () => {
     const fileInputRef = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [previewImage, setPreviewImage] = useState(null); 
+    const [loading, setLoading] = useState(false)
+
+
 
     // get profile data
     const { data: user, isLoading, isError } = useGetMe();
@@ -37,6 +40,7 @@ const Page = () => {
         }
 
         try {
+            setLoading(true)
             const res = await api.patch("/profile", dataToSend, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -44,11 +48,11 @@ const Page = () => {
             });
             console.log(res.data);
             SuccessToast(res?.data?.message || "Profile updated successfully!");
-
+            
             queryClient.invalidateQueries({ queryKey: ["me"] });
             setSelectedFile(null);
             setPreviewImage(null);
-
+            setLoading(false)
         } catch (error) {
             const message = error?.response?.data?.message || "Something went wrong!";
             ErrorToast(message);
@@ -71,6 +75,7 @@ const Page = () => {
 
     // Change Password
     const onSubmitPassword = async (fromData) => {
+        setLoading(true)
         try {
             const changePass = {
                 old_password: fromData.currentPassword,
@@ -78,6 +83,7 @@ const Page = () => {
             }
             const res = await api.post("/profile/change-password", changePass)
             SuccessToast(res?.data?.message)
+            setLoading(false)
         } catch (error) {
             const message = error?.response?.data?.message
             if (message === "Invalid password") {
@@ -177,7 +183,7 @@ const Page = () => {
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                <EditProfiletab {...{ activeTab, handleSubmit, onSubmitProfile, register, user }} />
+                                <EditProfiletab {...{ activeTab, handleSubmit, onSubmitProfile, register, user, loading }} />
                             </motion.div>
                         )}
 
@@ -189,7 +195,7 @@ const Page = () => {
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                <EditPassTab {...{ activeTab, handleSubmit, onSubmitPassword, register }} />
+                                <EditPassTab {...{ activeTab, handleSubmit, onSubmitPassword, register, loading }} />
                             </motion.div>
                         )}
                     </AnimatePresence>

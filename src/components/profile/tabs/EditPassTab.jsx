@@ -2,7 +2,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-const EditPassTab = ({ activeTab, onSubmitPassword }) => {
+const EditPassTab = ({ activeTab, onSubmitPassword, loading }) => {
     const [showPassword, setShowPassword] = useState({
         current: false,
         new: false,
@@ -41,7 +41,7 @@ const EditPassTab = ({ activeTab, onSubmitPassword }) => {
                             className="absolute right-3 top-10 cursor-pointer text-gray-500"
                             onClick={() => toggleShow("current")}
                         >
-                            {showPassword.current ? <FiEyeOff color="#1ac0b896" size={20}/> : <FiEye color="#1ac0b896" size={20}/>}
+                            {showPassword.current ? <FiEyeOff color="#1ac0b896" size={20} /> : <FiEye color="#1ac0b896" size={20} />}
                         </span>
                         {errors.currentPassword && <p className="text-red-500 text-sm mt-1">{errors.currentPassword.message}</p>}
                     </div>
@@ -64,7 +64,7 @@ const EditPassTab = ({ activeTab, onSubmitPassword }) => {
                             className="absolute right-3 top-10 cursor-pointer text-gray-500"
                             onClick={() => toggleShow("new")}
                         >
-                            {showPassword.new ? <FiEyeOff color="#1ac0b896" size={20}/> : <FiEye color="#1ac0b896" size={20}/>}
+                            {showPassword.new ? <FiEyeOff color="#1ac0b896" size={20} /> : <FiEye color="#1ac0b896" size={20} />}
                         </span>
                         {errors.newPassword && <p className="text-red-500 text-sm mt-1">{errors.newPassword.message}</p>}
                     </div>
@@ -85,14 +85,16 @@ const EditPassTab = ({ activeTab, onSubmitPassword }) => {
                             className="absolute right-3 top-10 cursor-pointer text-gray-500"
                             onClick={() => toggleShow("confirm")}
                         >
-                            {showPassword.confirm ? <FiEyeOff color="#1ac0b896" size={20}/> : <FiEye color="#1ac0b896" size={20}/>}
+                            {showPassword.confirm ? <FiEyeOff color="#1ac0b896" size={20} /> : <FiEye color="#1ac0b896" size={20} />}
                         </span>
                         {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>}
                     </div>
 
                     <div className='w-full text-center'>
-                        <button type="submit" className="mt-4 px-8 bg-teal-500 hover:bg-teal-600 text-white py-2 rounded-md cursor-pointer">
-                            Save Changes
+                        <button type="submit" disabled={loading} className="disabled:cursor-not-allowed mt-4 px-8 bg-teal-500 hover:bg-teal-600 text-white py-2 rounded-xs cursor-pointer">
+                            {
+                                loading ? <ImSpinner9 size={20} className="animate-spin" /> : 'Save Changes'
+                            }
                         </button>
                     </div>
                 </form>

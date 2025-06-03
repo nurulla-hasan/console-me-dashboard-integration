@@ -30,7 +30,7 @@ export const Users = () => {
     queryFn: () => getUsers(page, query),
     keepPreviousData: true, 
   });
-
+ 
   const users = data?.users || [];
   const totalUsers = data?.totalUsers || 0;
   const totalPages = data?.totalPages || 1;
