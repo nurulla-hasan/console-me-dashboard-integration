@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { PiEyeLight } from "react-icons/pi";
 import { PiEyeSlash } from "react-icons/pi";
 import { resetPassword } from "@/lib/api/auth";
-import toast from "react-hot-toast";
+import { ErrorToast, SuccessToast } from "@/utils/ValidationToast";
 
 const ResetPasswordForm = () => {
   const router = useRouter();
@@ -31,7 +31,7 @@ const ResetPasswordForm = () => {
       const email = localStorage.getItem("resetEmail");
       const token = localStorage.getItem("passwordResetToken");
       if (!email) {
-        toast.error("No email found.");
+        ErrorToast("No email found.");
         setIsSubmitting(false);
         return;
       }
@@ -44,14 +44,13 @@ const ResetPasswordForm = () => {
 
       await resetPassword(payload);
 
-      toast.success("Password reset successfully!");
+      SuccessToast("Password reset successfully!");
       router.push("/auth/login");
       localStorage.removeItem("resetEmail");
       localStorage.removeItem("passwordResetToken");
     } catch (error) {
-      console.error(error);
-      const msg = error?.response?.data?.message || "Failed to reset password.";
-      toast.error(msg);
+      const msg = error?.response?.data?.message || error?.message || "Failed to reset password.";
+      ErrorToast(msg);
     } finally {
       setIsSubmitting(false);
     }

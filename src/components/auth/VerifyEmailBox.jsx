@@ -1,8 +1,8 @@
 "use client";
 import { forgotPassword, verifyOtp } from "@/lib/api/auth";
+import { ErrorToast, SuccessToast } from "@/utils/ValidationToast";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-import toast from "react-hot-toast";
 
 const VerifyEmailForm = () => {
   const router = useRouter()
@@ -52,7 +52,7 @@ const VerifyEmailForm = () => {
     try {
       const email = localStorage.getItem("resetEmail");
       if (!email) {
-        toast.error("No email found.");
+        ErrorToast("No email found.");
         return;
       }
 
@@ -61,15 +61,14 @@ const VerifyEmailForm = () => {
       const pass_reset_token = res?.data?.passwordResetToken;
       localStorage.setItem("passwordResetToken", pass_reset_token);
 
-      toast.success("OTP verified!");
+      SuccessToast("OTP verified!");
       router.push("/auth/reset-password");
     } catch (error) {
-      console.error(error);
       if (error.message === "Network Error") {
-        toast.error("Network Error");
+        ErrorToast("Network Error");
       } else {
-        const msg = error?.response?.data?.message || "Invalid OTP";
-        toast.error(msg);
+        const msg = error?.response?.data?.message || error?.message || "Invalid OTP";
+        ErrorToast(msg);
       }
 
     } finally {
@@ -83,15 +82,14 @@ const VerifyEmailForm = () => {
       setIsSubmitting(true);
       const email = localStorage.getItem("resetEmail");
       if (!email) {
-        toast.error("No email found to resend verification.");
+        ErrorToast("No email found to resend verification.");
         return;
       }
 
       await forgotPassword({ email });
-      toast.success("Verification code resent!");
+      SuccessToast("Verification code resent!");
     } catch (error) {
-      console.error(error);
-      toast.error("Failed to resend code!");
+      ErrorToast("Failed to resend code!");
     } finally {
       setIsSubmitting(false);
     }

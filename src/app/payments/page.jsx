@@ -18,7 +18,6 @@ import NoData from '@/components/no-data/NoData';
 export const Payments = () => {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
-  // const [query, setQuery] = useState("");
 
   const [showModal, setShowModal] = useState(false);
   const [selectedWithdrawRequest, setSelectedWithdrawRequest] = useState(null);
@@ -44,13 +43,12 @@ export const Payments = () => {
     mutationFn: updateWithdrawRequestStatus,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['withdrawRequests', page] });
-      SuccessToast("Withdraw request status updated successfully!");
+      // SuccessToast(data?.message || "Withdraw request status updated successfully!");
       setShowModal(false);
       setSelectedWithdrawRequest(null);
     },
     onError: (error) => {
-      console.error("Error updating withdraw request status:", error);
-      ErrorToast(error.response?.data?.message || error.message || "Failed to update withdraw request status.");
+      // ErrorToast(error.message || "Failed to update withdraw request status.");
     },
   });
 
@@ -80,11 +78,9 @@ export const Payments = () => {
           });
           SuccessToast("Funds transfer initiated successfully!");
         } catch (transferError) {
-          console.error("Error initiating fund transfer:", transferError);
-          ErrorToast(transferError.response?.data?.message || transferError.message || "Failed to initiate fund transfer.");
+          ErrorToast(transferError.message || "Failed to initiate fund transfer.");
         }
       } else {
-        console.error("Cannot transfer funds: Missing amount or destinationAccountId for completed request.");
         ErrorToast("Funds transfer failed: Missing crucial payment details.");
       }
     }

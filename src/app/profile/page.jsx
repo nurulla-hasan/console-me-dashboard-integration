@@ -46,7 +46,6 @@ const Page = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            console.log(res.data);
             SuccessToast(res?.data?.message || "Profile updated successfully!");
             
             queryClient.invalidateQueries({ queryKey: ["me"] });
@@ -54,9 +53,8 @@ const Page = () => {
             setPreviewImage(null);
             setLoading(false)
         } catch (error) {
-            const message = error?.response?.data?.message || "Something went wrong!";
+            const message = error?.response?.data?.message || error?.message || "Something went wrong!";
             ErrorToast(message);
-            console.error("Profile update failed:", error);
         }
     };
 

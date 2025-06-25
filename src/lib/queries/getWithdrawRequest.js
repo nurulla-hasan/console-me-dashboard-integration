@@ -20,7 +20,6 @@ export const getWithdrawRequest = async (pageNumber = 1) => {
         }
 
     } catch (error) {
-        console.error("Error fetching withdraw requests:", error);
         throw error;
     }
 }  

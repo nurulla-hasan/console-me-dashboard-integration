@@ -69,7 +69,6 @@ export default function CategoryManagement() {
         setDeletingCategoryId(null);
       },
       onError: (error) => {
-        console.error("Delete error:", error);
         ErrorToast(error.response?.data?.message || error.message || "Failed to delete category");
         setDeletingCategoryId(null);
       },
@@ -100,7 +99,6 @@ export default function CategoryManagement() {
           setIsModalOpen(false);
         },
         onError: (error) => {
-          console.error("Update error:", error.response?.data || error.message);
           ErrorToast(error.response?.data?.message || "Failed to update category");
         },
       });
@@ -117,7 +115,6 @@ export default function CategoryManagement() {
           setIsModalOpen(false);
         },
         onError: (error) => {
-          console.error("Add error:", error.response?.data || error.message);
           ErrorToast(error.response?.data?.message || "Failed to add category");
         },
       });

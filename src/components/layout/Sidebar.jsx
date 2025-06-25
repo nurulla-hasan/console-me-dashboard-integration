@@ -14,14 +14,12 @@ const Sidebar = ({ isHideLayout, menuItems, setSettingsOpen, settingsOpen, setti
 
     const handleLogout = () => {
         try {
-            console.log("logout functon called")
             queryClient.invalidateQueries({ queryKey: ["me"] });
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
             router.replace('/auth/login');
 
         } catch (error) {
-            console.log(error);
         }
     };
 

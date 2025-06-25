@@ -15,7 +15,6 @@ export const useAddCategory = () => {
             queryClient.invalidateQueries({ queryKey: ["categories"] });
         },
         onError: (error) => {
-            console.error("Add Category Error:", error.response?.data || error.message);
         }
     });
 };
@@ -33,7 +32,7 @@ export const useUpdateCategory = () => {
             queryClient.invalidateQueries({ queryKey: ["categories"] });
         },
         onError: (error) => {
-            console.error("Update Category Error:", error.response?.data || error.message);
+            ErrorToast("Failed to update category");
         }
     });
 };
@@ -50,7 +49,6 @@ export const useDeleteCategory = () => {
             queryClient.invalidateQueries({ queryKey: ["categories"] });
         },
         onError: (error) => {
-            console.error("Delete Category Error:", error.response?.data || error.message);
             ErrorToast("Failed to delete category");
         }
     });

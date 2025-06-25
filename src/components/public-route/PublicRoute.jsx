@@ -1,15 +1,13 @@
-"use client";
+"use client"; 
+
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useGetMe } from "@/hooks/useGetMe";
 import Loading from "../loading/Loading";
-import { useQueryClient } from "@tanstack/react-query";
 
-const PrivateRoute = ({ children }) => {
-  const queryClient = useQueryClient();
+const PublicRoute = ({ children }) => {
   const router = useRouter();
   const { data: user, isLoading, isError } = useGetMe();
-
   const [hasMounted, setHasMounted] = useState(false); 
 
   useEffect(() => {
@@ -18,12 +16,11 @@ const PrivateRoute = ({ children }) => {
 
   useEffect(() => {
     if (hasMounted && !isLoading) {
-      if (isError || !user) {
-        queryClient.invalidateQueries({ queryKey: ["me"] });
-        router.replace("/auth/login");
+      if (user && !isError) {
+        router.replace("/");
       }
     }
-  }, [user, isLoading, isError, router, queryClient, hasMounted]);
+  }, [user, isLoading, isError, router, hasMounted]);
   if (!hasMounted || isLoading) {
     return (
       <div className="min-h-screen flex justify-center items-center bg-[#E6F8F7]">
@@ -31,11 +28,7 @@ const PrivateRoute = ({ children }) => {
       </div>
     );
   }
-
-  if (user) {
-    return <>{children}</>;
-  }
-  return null;
+  return <>{children}</>;
 };
 
-export default PrivateRoute;
+export default PublicRoute;

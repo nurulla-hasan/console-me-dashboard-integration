@@ -10,7 +10,7 @@ export const useGetMe = () => {
       const decoded = jwtDecode(token);
       userId = decoded?.id;
     } catch (error) {
-      console.error("Failed to decode token on init:", error);
+      throw error
     }
   }
 

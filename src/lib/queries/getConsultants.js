@@ -22,7 +22,6 @@ export const getConsultants = async (pageNumber = 1, query = "") => {
     };
 
   } catch (error) {
-    console.error("Error fetching users:", error);
     throw error;
   }
 };

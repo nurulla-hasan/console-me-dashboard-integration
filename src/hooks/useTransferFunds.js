@@ -16,10 +16,9 @@ export const useTransferFunds = () => {
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries(["withdraw-requests"]);
       queryClient.invalidateQueries(["user-balance", variables.destinationAccountId]);
-      console.log("Funds transferred successfully:", data);
     },
     onError: (error) => {
-      console.error("Error transferring funds:", error);
+      
     },
   });
 };

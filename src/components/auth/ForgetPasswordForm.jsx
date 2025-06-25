@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { forgotPassword } from "@/lib/api/auth";
-import toast from "react-hot-toast";
+import { ErrorToast, SuccessToast } from "@/utils/ValidationToast";
 
 const ForgotPasswordForm = () => {
   const router = useRouter();
@@ -22,13 +22,12 @@ const ForgotPasswordForm = () => {
       setIsSubmitting(true);
       // Call the forgot password API
       await forgotPassword({ email: data.email });
-      toast.success("Verification code sent to your email");
+      SuccessToast("Verification code sent to your email");
       localStorage.setItem("resetEmail", data.email);
       // Redirect user to verify email page
       router.push("/auth/verify-email");
     } catch (error) {
-      toast.error(error.message);
-      console.error(error);
+      ErrorToast(error?.message);
     } finally {
       setIsSubmitting(false);
     }

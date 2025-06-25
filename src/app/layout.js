@@ -14,6 +14,7 @@ import PrivateRoute from '@/components/private-route/PrivateRoute';
 import Sidebar from '@/components/layout/Sidebar';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import NextTopLoader from 'nextjs-toploader';
 const queryClient = new QueryClient();
 
 const menuItems = [
@@ -40,6 +41,11 @@ export default function RootLayout({ children }) {
       <body>
         <Provider store={store}>
           <QueryClientProvider client={queryClient}>
+            <NextTopLoader
+              color="#00B047"
+              height={2}
+              showSpinner={false}
+            />
             <Toaster
               toastOptions={{
                 style: {

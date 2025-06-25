@@ -2,7 +2,6 @@ import { ImSpinner9 } from "react-icons/im";
 
 
 const EditProfiletab = ({activeTab, handleSubmit, onSubmitProfile, register, user, loading}) => {
-    console.log(loading)
     return ( 
         <>
             {activeTab === 'profile' && (

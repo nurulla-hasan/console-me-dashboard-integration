@@ -5,7 +5,6 @@ export const getNotificationsCount = async () => {
         const res = await api.get("/notifications/count"); 
         return res.data;
     } catch (error) {
-        console.error("Error fetching notifications:", error);
         throw error; 
     }
 };
