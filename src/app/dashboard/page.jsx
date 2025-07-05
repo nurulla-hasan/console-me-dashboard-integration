@@ -1,11 +1,10 @@
-// Home.jsx
+
 'use client';
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useState, useEffect } from 'react'; // useEffect ইম্পোর্ট করুন
+import { useState, useEffect } from 'react';
 
-// সঠিক ইম্পোর্ট নিশ্চিত করুন
 import UserGrowthChart from "@/components/dashboard/UserGrowthChart";
 import ConsultGrowthChart from "@/components/dashboard/ConsultGrowthChart";
 import EarningGrowthChart from "@/components/dashboard/EarningGrowthChart";
@@ -19,19 +18,16 @@ import Error from "@/components/error/Error";
 
 
 export const Home = () => {
-  // প্রতিটি চার্টের জন্য আলাদা বছর স্টেট, প্রাথমিক মান null/undeined
   const [userYear, setUserYear] = useState(null);
   const [consultYear, setConsultYear] = useState(null);
   const [earningYear, setEarningYear] = useState(null);
 
-  // API কল করার জন্য useQuery
   const { data: dashboardApiResponse, isLoading, isError } = useQuery({
     queryKey: ["dashBoarddata", userYear, consultYear, earningYear],
-    queryFn: () => getDashboardData(userYear, consultYear, earningYear), // এখানে year প্যারামিটার optional বা default সেট করতে পারেন API-এ
+    queryFn: () => getDashboardData(userYear, consultYear, earningYear), 
     keepPreviousData: true,
   });
 
-  // ডেটা destructuring
   const {
     total_users,
     total_consultants,
@@ -41,7 +37,6 @@ export const Home = () => {
     earning_growth,
   } = dashboardApiResponse?.data || {};
 
-  // যখন API ডেটা লোড হয়, তখন প্রাথমিক বছর সেট করুন
   useEffect(() => {
     if (dashboardApiResponse?.data) {
       if (user_growth && userYear === null) {
@@ -58,7 +53,6 @@ export const Home = () => {
 
 
   if (isLoading || userYear === null || consultYear === null || earningYear === null) {
-    // প্রাথমিক লোডিং অবস্থায় Loading কম্পোনেন্ট দেখান
     return <PageContainer><Loading /></PageContainer>;
   }
 
@@ -66,12 +60,7 @@ export const Home = () => {
     return <PageContainer><Error itemName="dashboard data" /></PageContainer>;
   }
 
-  // API থেকে পাওয়া সকল বছরের তালিকা তৈরি করুন (যদি আপনার API এমন ডেটা না দেয়, তাহলে ম্যানুয়ালি যোগ করতে পারেন)
-  // এই ফাংশনটি একটি সরল অনুমান, আপনার API যদি বছরের তালিকা দিত তাহলে আরও ভালো হতো।
-  // যেহেতু আপনার JSON এ শুধু 2025 আছে, আমি 2023, 2024, 2025 কে ডিফল্ট অপশন হিসেবে ধরে নিলাম।
-  // যদি আপনার API বিভিন্ন বছরের ডেটা দিতে পারে, তাহলে getDashboardData ফাংশনটি বছরের তালিকাও রেসপন্স করবে আশা করা যায়।
-  // আপাতত একটি স্ট্যাটিক অ্যারে ব্যবহার করা হচ্ছে যা আপনি প্রয়োজন অনুযায়ী পরিবর্তন করতে পারেন।
-  const availableYears = [2023, 2024, 2025]; // আপনার API এর ডেটা অনুযায়ী এই বছরগুলো পরিবর্তন করুন
+  const availableYears = [2023, 2024, 2025];
 
   return (
     <PageContainer>
@@ -117,7 +106,7 @@ export const Home = () => {
                 chartData={user_growth.chart}
                 currentYear={userYear}
                 onYearChange={setUserYear}
-                availableYears={availableYears} // সকল বছর পাস করা হয়েছে
+                availableYears={availableYears}
               />
             </div>
           )}
@@ -127,7 +116,7 @@ export const Home = () => {
                 chartData={consultant_growth.chart}
                 currentYear={consultYear}
                 onYearChange={setConsultYear}
-                availableYears={availableYears} // সকল বছর পাস করা হয়েছে
+                availableYears={availableYears}
               />
             </div>
           )}
@@ -145,7 +134,7 @@ export const Home = () => {
               chartData={earning_growth.chart}
               currentYear={earningYear}
               onYearChange={setEarningYear}
-              availableYears={availableYears} // সকল বছর পাস করা হয়েছে
+              availableYears={availableYears} 
             />
           )}
         </motion.div>

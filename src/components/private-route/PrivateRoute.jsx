@@ -19,22 +19,29 @@ const PrivateRoute = ({ children }) => {
   useEffect(() => {
     if (hasMounted && !isLoading) {
       if (isError || !user) {
-        queryClient.invalidateQueries({ queryKey: ["me"] });
-        router.replace("/auth/login");
+        // Only redirect if not already on the login page to prevent infinite loops
+        if (router.pathname !== "/auth/login") {
+          queryClient.invalidateQueries({ queryKey: ["me"] });
+          router.replace("/auth/login");
+        }
       }
     }
   }, [user, isLoading, isError, router, queryClient, hasMounted]);
+
+  // Show loading state while data is being fetched or component hasn't mounted
   if (!hasMounted || isLoading) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-[#E6F8F7]">
+      <div className="min-h-screen flex justify-center items-center">
         <Loading />
       </div>
     );
   }
 
+  // If user is authenticated, render children
   if (user) {
     return <>{children}</>;
   }
+
   return null;
 };
 

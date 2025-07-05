@@ -1,5 +1,4 @@
-"use client"; 
-
+"use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useGetMe } from "@/hooks/useGetMe";
@@ -16,18 +15,30 @@ const PublicRoute = ({ children }) => {
 
   useEffect(() => {
     if (hasMounted && !isLoading) {
-      if (user && !isError) {
-        router.replace("/");
+      if (user && !isError) { // User IS authenticated
+        // Only redirect if not already on the dashboard page to prevent infinite loops
+        if (router.pathname !== "/dashboard") {
+          router.replace("/dashboard");
+        }
       }
     }
   }, [user, isLoading, isError, router, hasMounted]);
+
+  // Show loading state while data is being fetched or component hasn't mounted
   if (!hasMounted || isLoading) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-[#E6F8F7]">
+      <div className="min-h-screen flex justify-center items-center">
         <Loading />
       </div>
     );
   }
+
+  // If user is authenticated, return null (will be redirected by useEffect)
+  if (user && !isError) {
+    return null;
+  }
+
+  // If not authenticated, render children
   return <>{children}</>;
 };
 

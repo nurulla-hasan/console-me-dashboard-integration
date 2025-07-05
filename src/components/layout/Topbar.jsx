@@ -4,8 +4,16 @@ import { IoMdNotificationsOutline } from 'react-icons/io';
 import { useGetMe } from '@/hooks/useGetMe';
 import { useQuery } from '@tanstack/react-query';
 import { getNotificationsCount } from '@/lib/queries/getNotificationsCount';
+import Image from 'next/image';
+import { useEffect, useState } from 'react'; // useEffect এবং useState import করা হয়েছে
 
 const Topbar = ({ isHideLayout }) => {
+    const [mounted, setMounted] = useState(false); // নতুন স্টেট যোগ করা হয়েছে
+
+    useEffect(() => {
+        // কম্পোনেন্টটি ক্লায়েন্টে মাউন্ট হওয়ার পর mounted কে true করবে
+        setMounted(true);
+    }, []);
 
     const { data: user, isLoading, isError } = useGetMe();
 
@@ -18,7 +26,7 @@ const Topbar = ({ isHideLayout }) => {
         <div className={`${isHideLayout ? "hidden" : ""} bg-[#dbf8f8] backdrop-blur-2xl z-10 sticky top-0 flex justify-end items-center gap-4 h-24 pr-12`}>
             <div className='flex items-center gap-4'>
                 <button className="relative w-10 h-10 rounded-full bg-white flex items-center justify-center cursor-pointer">
-                    <Link href="/notification">
+                    <Link href="/dashboard/notification">
                         <IoMdNotificationsOutline color='#00A89D' size={30} />
                     </Link>
 
@@ -26,14 +34,26 @@ const Topbar = ({ isHideLayout }) => {
                         <span>{countResponse?.data}</span>
                     </div>
                 </button>
-                <Link href={"/profile"}>
-                    <img
-                        src={user?.photo_url || "/images/avatar.png"}
-                        alt="User"
-                        className="rounded-full cursor-pointer w-10 h-10 object-cover"
-                    />
+                <Link href={"/dashboard/settings/profile"}>
+                    <div className='relative w-10 h-10 rounded-full overflow-hidden'>
+                        {!mounted || isLoading ? (
+                            <div className="w-10 h-10 rounded-full bg-gray-300 animate-pulse"></div>
+                        ) : (
+                            <Image
+                                src={user?.photo_url}
+                                alt="User"
+                                fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                className="rounded-full cursor-pointer object-cover"
+                            />
+                        )}
+                    </div>
                 </Link>
-                <span className="text-md font-medium text-gray-700">{user?.name || "Unknown User"}</span>
+                {!mounted || isLoading ? (
+                    <span className="w-24 h-5 bg-gray-300 animate-pulse rounded"></span>
+                ) : (
+                    <span className="text-md font-medium text-gray-700">{user?.name}</span>
+                )}
             </div>
         </div>
     );
