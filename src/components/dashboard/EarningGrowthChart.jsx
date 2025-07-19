@@ -1,4 +1,4 @@
-// components/dashboard/EarningGrowthChart.jsx
+
 'use client';
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';

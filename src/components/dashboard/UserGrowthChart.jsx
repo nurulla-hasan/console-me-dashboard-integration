@@ -1,13 +1,11 @@
-// components/dashboard/UserGrowthChart.jsx
+
 'use client';
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function UserGrowthChart({ chartData, currentYear, onYearChange, availableYears }) {
-    // currentYear প্রপস থেকে লোকাল স্টেট ইনিশিয়ালাইজ করুন
     const [selectedYearLocal, setSelectedYearLocal] = useState(currentYear?.toString());
 
-    // যখন currentYear প্রপস পরিবর্তন হবে (API থেকে নতুন ডেটা আসার পর)
     useEffect(() => {
         if (currentYear !== undefined && currentYear !== null) {
             setSelectedYearLocal(currentYear.toString());
@@ -17,10 +15,9 @@ export default function UserGrowthChart({ chartData, currentYear, onYearChange, 
     const handleYearChange = (e) => {
         const newYear = parseInt(e.target.value);
         setSelectedYearLocal(newYear.toString());
-        onYearChange(newYear); // প্যারেন্টকে নতুন বছর সম্পর্কে জানান
+        onYearChange(newYear);
     };
 
-    // API থেকে আসা ডেটা Recharts ফরম্যাটে রূপান্তর করুন
     const formattedChartData = chartData?.labels?.map((label, index) => ({
         name: label,
         active: chartData.data[0] ? chartData.data[0][index] : 0,

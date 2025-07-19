@@ -28,9 +28,11 @@ const Sidebar = ({ isHideLayout, menuItems, setSettingsOpen, settingsOpen, setti
             <aside className={`${isHideLayout ? "hidden" : ""} w-62  flex flex-col justify-between pb-10 bg-[#dbf8f8]`}>
                 <div>
                     {/* Logo */}
+                    <Link href="/">                    
                     <div className="flex items-center justify-center">
                         <img src="/images/logo3.png" width={130} height={65} alt="Logo" />
                     </div>
+                    </Link>
 
                     {/* Navigation */}
                     <nav className="flex flex-col gap-2 font-medium px-2">

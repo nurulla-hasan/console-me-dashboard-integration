@@ -17,8 +17,8 @@ const PublicRoute = ({ children }) => {
     if (hasMounted && !isLoading) {
       if (user && !isError) { // User IS authenticated
         // Only redirect if not already on the dashboard page to prevent infinite loops
-        if (router.pathname !== "/dashboard") {
-          router.replace("/dashboard");
+        if (router.pathname !== "/") {
+          router.replace("/");
         }
       }
     }

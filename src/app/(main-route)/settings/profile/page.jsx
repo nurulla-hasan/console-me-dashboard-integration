@@ -46,7 +46,7 @@ const Page = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            SuccessToast(res?.data?.message || "Profile updated successfully!");
+            SuccessToast(res?.data?.message || "Profile updated successfully!"); 
             
             queryClient.invalidateQueries({ queryKey: ["me"] });
             setSelectedFile(null);

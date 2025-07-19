@@ -4,20 +4,17 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState, useEffect } from 'react';
-
+import PageContainer from "@/components/container/PageContainer";
+import Loading from "@/components/loading/Loading";
+import Error from "@/components/error/Error";
 import UserGrowthChart from "@/components/dashboard/UserGrowthChart";
 import ConsultGrowthChart from "@/components/dashboard/ConsultGrowthChart";
 import EarningGrowthChart from "@/components/dashboard/EarningGrowthChart";
-
-import PageContainer from "@/components/container/PageContainer";
 import { useQuery } from "@tanstack/react-query";
 import { getDashboardData } from "@/lib/queries/getDeshboardData";
 
-import Loading from "@/components/loading/Loading";
-import Error from "@/components/error/Error";
 
-
-export const Home = () => {
+ const Home = () => {
   const [userYear, setUserYear] = useState(null);
   const [consultYear, setConsultYear] = useState(null);
   const [earningYear, setEarningYear] = useState(null);
@@ -53,7 +50,7 @@ export const Home = () => {
 
 
   if (isLoading || userYear === null || consultYear === null || earningYear === null) {
-    return <PageContainer><Loading /></PageContainer>;
+    return <PageContainer><Loading/></PageContainer>;
   }
 
   if (isError) {

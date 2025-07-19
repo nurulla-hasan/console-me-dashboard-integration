@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@lexical/react": "^0.30.0",
-    "@reduxjs/toolkit": "^2.7.0",
     "@tanstack/react-query": "^5.76.1",
     "@tiptap/pm": "^2.11.7",
     "axios": "^1.9.0",
@@ -19,14 +18,13 @@
     "jodit-react": "^5.2.19",
     "jwt-decode": "^4.0.0",
     "lottie-react": "^2.4.1",
-    "next": "15.3.1",
+    "next": "^15.4.2",
     "nextjs-toploader": "^3.8.16",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.56.1",
     "react-hot-toast": "^2.5.2",
     "react-icons": "^5.5.0",
-    "react-redux": "^9.2.0",
     "recharts": "^2.15.3"
   },
   "devDependencies": {

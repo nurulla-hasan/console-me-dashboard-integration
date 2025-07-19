@@ -5,13 +5,12 @@ import { useGetMe } from '@/hooks/useGetMe';
 import { useQuery } from '@tanstack/react-query';
 import { getNotificationsCount } from '@/lib/queries/getNotificationsCount';
 import Image from 'next/image';
-import { useEffect, useState } from 'react'; // useEffect এবং useState import করা হয়েছে
+import { useEffect, useState } from 'react';
 
 const Topbar = ({ isHideLayout }) => {
-    const [mounted, setMounted] = useState(false); // নতুন স্টেট যোগ করা হয়েছে
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        // কম্পোনেন্টটি ক্লায়েন্টে মাউন্ট হওয়ার পর mounted কে true করবে
         setMounted(true);
     }, []);
 
@@ -26,15 +25,15 @@ const Topbar = ({ isHideLayout }) => {
         <div className={`${isHideLayout ? "hidden" : ""} bg-[#dbf8f8] backdrop-blur-2xl z-10 sticky top-0 flex justify-end items-center gap-4 h-24 pr-12`}>
             <div className='flex items-center gap-4'>
                 <button className="relative w-10 h-10 rounded-full bg-white flex items-center justify-center cursor-pointer">
-                    <Link href="/dashboard/notification">
+                    <Link href="/notification">
                         <IoMdNotificationsOutline color='#00A89D' size={30} />
+                        <div className='absolute flex justify-center items-center w-5 h-5 rounded-full bg-teal-500 top-0 right-0 text-[10px] '>
+                            <span>{countResponse?.data}</span>
+                        </div>
                     </Link>
 
-                    <div className='absolute flex justify-center items-center w-5 h-5 rounded-full bg-teal-500 top-0 right-0 text-[10px] '>
-                        <span>{countResponse?.data}</span>
-                    </div>
                 </button>
-                <Link href={"/dashboard/settings/profile"}>
+                <Link href={"/settings/profile"}>
                     <div className='relative w-10 h-10 rounded-full overflow-hidden'>
                         {!mounted || isLoading ? (
                             <div className="w-10 h-10 rounded-full bg-gray-300 animate-pulse"></div>
@@ -49,11 +48,13 @@ const Topbar = ({ isHideLayout }) => {
                         )}
                     </div>
                 </Link>
-                {!mounted || isLoading ? (
-                    <span className="w-24 h-5 bg-gray-300 animate-pulse rounded"></span>
-                ) : (
-                    <span className="text-md font-medium text-gray-700">{user?.name}</span>
-                )}
+                <Link href={"/settings/profile"}>
+                    {!mounted || isLoading ? (
+                        <span className="w-24 h-5 bg-gray-300 animate-pulse rounded"></span>
+                    ) : (
+                        <span className="text-md font-medium text-gray-700">{user?.name}</span>
+                    )}
+                </Link>
             </div>
         </div>
     );

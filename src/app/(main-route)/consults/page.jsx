@@ -1,4 +1,3 @@
-// app/dashboard/admin/consults/page.jsx
 "use client";
 import PageContainer from "@/components/container/PageContainer";
 import ConsultantModal from "@/components/modal/consultant-modal/ConsultantModal";

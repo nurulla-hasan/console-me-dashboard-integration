@@ -10,17 +10,17 @@ import PrivateRoute from '@/components/private-route/PrivateRoute';
 import { usePathname } from "next/navigation";
 
 const menuItems = [
-    { label: "Dashboard", href: "/dashboard", icon: <LuLayoutDashboard size={20} /> },
-    { label: "User Management", href: "/dashboard/users", icon: <HiOutlineUserCircle size={20} /> },
-    { label: "Consult Management", href: "/dashboard/consults", icon: <ImUserTie size={20} /> },
-    { label: "Payment", href: "/dashboard/payments", icon: <MdPayment size={20} /> },
-    { label: "Category Management", href: "/dashboard/categories", icon: <LuLayoutDashboard size={20} /> },
-    { label: "Notification", href: "/dashboard/notification", icon: <LuLayoutDashboard size={20} /> },
+    { label: "Dashboard", href: "/", icon: <LuLayoutDashboard size={20} /> },
+    { label: "User Management", href: "/users", icon: <HiOutlineUserCircle size={20} /> },
+    { label: "Consult Management", href: "/consults", icon: <ImUserTie size={20} /> },
+    { label: "Payment", href: "/payments", icon: <MdPayment size={20} /> },
+    { label: "Category Management", href: "/categories", icon: <LuLayoutDashboard size={20} /> },
+    { label: "Notification", href: "/notification", icon: <LuLayoutDashboard size={20} /> },
 ];
 const settingMenu = [
-    { label: "Profile", href: "/dashboard/settings/profile" },
-    { label: "Terms & Condition", href: "/dashboard/settings/terms" },
-    { label: "About Us", href: "/dashboard/settings/about" },
+    { label: "Profile", href: "/settings/profile" },
+    { label: "Terms & Condition", href: "/settings/terms" },
+    { label: "About Us", href: "/settings/about" },
 ];
 
 export default function DashboardLayout({ children }) {
