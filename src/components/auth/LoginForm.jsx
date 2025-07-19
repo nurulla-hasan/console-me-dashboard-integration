@@ -1,24 +1,18 @@
 "use client";
-import { Suspense } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PiEyeLight, PiEyeSlash } from "react-icons/pi"; 
 import { ImSpinner9 } from "react-icons/im";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { login } from "@/lib/api/auth";
 import { ErrorToast, SuccessToast } from "@/utils/ValidationToast";
 import { jwtDecode } from "jwt-decode";
-import Loading from "../loading/Loading";
 
-const LoginFormContent = () => {
+const LoginForm = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") || "/";
   const [isLoading, setIsLoading] = useState(false); 
-
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberPassword, setRememberPassword] = useState(false);
 
   const {
     register,
@@ -29,7 +23,7 @@ const LoginFormContent = () => {
   const onSubmit = async (data) => {
     setIsLoading(true); 
     try {
-      const res = await login({ ...data, rememberMe: rememberPassword }); 
+      const res = await login({ ...data }); 
       
       const { accessToken, refreshToken, message } = res.data;
 
@@ -38,7 +32,7 @@ const LoginFormContent = () => {
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken); 
         SuccessToast(message);
-        router.replace(redirect);
+        router.replace("/");
       } else {
         ErrorToast("You are not an admin");
       }
@@ -150,14 +144,6 @@ const LoginFormContent = () => {
         </form>
       </div>
     </div>
-  );
-};
-
-const LoginForm = () => {
-  return (
-    <Suspense fallback={<Loading/>}>
-      <LoginFormContent />
-    </Suspense>
   );
 };
 
