@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "https://consult-me-backend.onrender.com",
+  baseURL: "http://13.58.33.119:5000",
 });
 
 // Request interceptor: dynamically add token
