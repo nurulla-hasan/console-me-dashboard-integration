@@ -39,7 +39,7 @@ const Topbar = ({ isHideLayout }) => {
                             <div className="w-10 h-10 rounded-full bg-gray-300 animate-pulse"></div>
                         ) : (
                             <Image
-                                src={user?.photo_url}
+                                src={user?.photo_url || "/images/avatar.png"}
                                 alt="User"
                                 fill
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
