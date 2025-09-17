@@ -1,6 +1,7 @@
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { ImSpinner9 } from "react-icons/im";
 
 const EditPassTab = ({ activeTab, onSubmitPassword, loading }) => {
     const [showPassword, setShowPassword] = useState({

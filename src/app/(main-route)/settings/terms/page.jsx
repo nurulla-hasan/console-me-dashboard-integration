@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 import { ErrorToast, SuccessToast } from "@/utils/ValidationToast";
 import { getLegal } from "@/lib/queries/getLegal";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -53,7 +53,7 @@ const Terms = () => {
     }
   };
 
-  const editorConfig = {
+  const editorConfig = useMemo(() => ({
     readonly: false,
     height: 500,
     style: {
@@ -67,7 +67,7 @@ const Terms = () => {
     showWordsCounter: true,
     showXPathInStatusbar: false,
     placeholder: "Write your Terms & Conditions here...",
-  };
+  }), []);
 
   return (
     <div className="bg-[#F6F6F6] min-h-[calc(100vh-96px)] p-4">
@@ -92,7 +92,7 @@ const Terms = () => {
         >
           {isSaving ? (
             <div className="flex gap-2 items-center">
-              <ImSpinner9 size={20} className="animate-spin"/>
+              <ImSpinner9 size={20} className="animate-spin" />
               Processing...
             </div>
           ) : (
