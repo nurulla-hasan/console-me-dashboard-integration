@@ -15,15 +15,15 @@ const JoditEditor = dynamic(() => import("jodit-react"), {
   loading: () => <Loading />
 });
 
-const Terms = () => {
+const Policy = () => {
   const [content, setContent] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const editor = useRef(null)
   const queryClient = useQueryClient();
 
   const { data: legalData, isLoading, isError } = useQuery({
-    queryKey: ["legal", "terms"],
-    queryFn: () => getLegal("terms"),
+    queryKey: ["legal", "privacy-policy"],
+    queryFn: () => getLegal("privacy-policy"),
   });
 
   useEffect(() => {
@@ -41,11 +41,11 @@ const Terms = () => {
     setIsSaving(true);
     try {
       await updateLegal({
-        type: "terms",
+        type: "privacy-policy",
         content,
       });
       SuccessToast("Terms updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["legal", "terms"] });
+      queryClient.invalidateQueries({ queryKey: ["legal", "privacy-policy"] });
     } catch (error) {
       ErrorToast("Failed to update Terms. Please try again.");
     } finally {
@@ -66,7 +66,7 @@ const Terms = () => {
     showCharsCounter: true,
     showWordsCounter: true,
     showXPathInStatusbar: false,
-    placeholder: "Write your Terms & Conditions here...",
+    placeholder: "Write your Privacy & Policy here...",
   }), []);
 
   return (
@@ -104,4 +104,4 @@ const Terms = () => {
   );
 };
 
-export default Terms;
+export default Policy;

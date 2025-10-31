@@ -140,7 +140,7 @@ export default function CategoryManagement() {
           Category Management
         </h1>
         <button
-          className="bg-teal-500 text-white px-4 py-2 rounded-xs flex items-center gap-1 cursor-pointer"
+          className="bg-teal-500 text-white px-4 py-1 rounded-xl flex items-center gap-1 cursor-pointer"
           onClick={handleAddNewModal}
         >
           <HiOutlinePlusSm size={20} color="#ffffff" />

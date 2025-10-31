@@ -35,7 +35,7 @@ const UserTable = ({ users, onBlockClick, currentlyBlockingUserId }) => {
                                     <button
                                         disabled={isBlockingThisUser}
                                         onClick={() => onBlockClick(user?._id)}
-                                        className={`w-20 py-2 flex items-center justify-center rounded-xs cursor-pointer transition-all duration-300 ${user?.account_status === "Banned"
+                                        className={`w-20 py-1 flex items-center justify-center rounded-xl cursor-pointer transition-all duration-300 ${user?.account_status === "Banned"
                                             ? "bg-red-200 text-red-600 hover:bg-red-300 border border-red-300"
                                             : "bg-green-200 text-green-700 hover:bg-green-300 border border-green-300"
                                             } `}

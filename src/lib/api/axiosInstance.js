@@ -2,8 +2,8 @@ import axios from "axios";
 
 export const api = axios.create({
   // baseURL: "http://13.58.33.119:5000",
-  // baseURL: "http://13.58.33.119:3000",
-  baseURL: "http://10.10.20.11:3000",
+  baseURL: "http://13.58.33.119:5000",
+  // baseURL: "http://10.10.20.11:3000",
 });
 
 // Request interceptor: dynamically add token

@@ -20,6 +20,7 @@ const menuItems = [
 const settingMenu = [
     { label: "Profile", href: "/settings/profile" },
     { label: "Terms & Condition", href: "/settings/terms" },
+    { label: "Privacy Policy", href: "/settings/policy" },
     { label: "About Us", href: "/settings/about" },
 ];
 
@@ -35,7 +36,7 @@ export default function DashboardLayout({ children }) {
             <main className="flex-1 overflow-auto scrl-hide bg-[#dbf8f8]">
                 {/* Top bar */}
                 <Topbar />
-                <div className='font-poppins min-h-[calc(100vh-96px)] overflow-y-auto rounded-t-lg bg-[#f8f8f8]'>
+                <div className='font-poppins min-h-[calc(100vh-96px)] overflow-y-auto rounded-t-xl bg-[#f8f8f8]'>
                     <PrivateRoute>
                         {children}
                     </PrivateRoute>

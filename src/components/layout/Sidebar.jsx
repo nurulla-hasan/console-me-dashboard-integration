@@ -42,7 +42,7 @@ const Sidebar = ({ isHideLayout, menuItems, setSettingsOpen, settingsOpen, setti
                                 <Link
                                     key={item.label}
                                     href={item.href}
-                                    className={`px-4 py-3 rounded-sm transition-all duration-300 ${isActive
+                                    className={`px-4 py-3 rounded-xl transition-all duration-300 ${isActive
                                         ? "bg-[#00A89D] text-white"
                                         : "text-[#00A89D] hover:bg-[#00A89D] bg-[#FEFEFE] hover:text-white"
                                         }`}
@@ -59,7 +59,7 @@ const Sidebar = ({ isHideLayout, menuItems, setSettingsOpen, settingsOpen, setti
                         <div>
                             <button
                                 onClick={() => setSettingsOpen(!settingsOpen)}
-                                className={`w-full cursor-pointer text-left px-4 py-3 rounded-sm text-[#00A89D] flex justify-between items-center transition-all duration-300 ${settingsOpen ? "bg-[#058279] text-white" : "bg-[#FEFEFE]"}`}
+                                className={`w-full cursor-pointer text-left px-4 py-3 rounded-xl text-[#00A89D] flex justify-between items-center transition-all duration-300 ${settingsOpen ? "bg-[#058279] text-white" : "bg-[#FEFEFE]"}`}
                             >
                                 <p className='flex items-center gap-2 text-sm'>
                                     <LuSettings size={20} />
@@ -83,7 +83,7 @@ const Sidebar = ({ isHideLayout, menuItems, setSettingsOpen, settingsOpen, setti
                                                 <Link
                                                     key={item.label}
                                                     href={item.href}
-                                                    className={`px-4 py-2 text-lg rounded-sm transition-colors duration-200 ${isActive
+                                                    className={`px-4 py-2 text-lg rounded-xl transition-colors duration-200 ${isActive
                                                         ? "bg-[#058279] text-white"
                                                         : "text-[#00A89D] hover:bg-[#00A89D] bg-[#FEFEFE] hover:text-white"
                                                         }`}

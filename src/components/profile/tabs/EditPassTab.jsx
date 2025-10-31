@@ -36,7 +36,7 @@ const EditPassTab = ({ activeTab, onSubmitPassword, loading }) => {
                             {...register('currentPassword', {
                                 required: 'Current password is required',
                             })}
-                            className="w-full border border-teal-400 rounded-md p-2 pr-10 outline-none"
+                            className="w-full border border-teal-400 rounded-xl p-2 pr-10 outline-none"
                         />
                         <span
                             className="absolute right-3 top-10 cursor-pointer text-gray-500"
@@ -59,7 +59,7 @@ const EditPassTab = ({ activeTab, onSubmitPassword, loading }) => {
                                     message: 'Password must be at least 6 characters',
                                 },
                             })}
-                            className="w-full border border-teal-400 rounded-md p-2 pr-10 outline-none"
+                            className="w-full border border-teal-400 rounded-xl p-2 pr-10 outline-none"
                         />
                         <span
                             className="absolute right-3 top-10 cursor-pointer text-gray-500"
@@ -80,7 +80,7 @@ const EditPassTab = ({ activeTab, onSubmitPassword, loading }) => {
                                 validate: value =>
                                     value === watch('newPassword') || 'Passwords do not match',
                             })}
-                            className="w-full border border-teal-400 rounded-md p-2 pr-10 outline-none"
+                            className="w-full border border-teal-400 rounded-xl p-2 pr-10 outline-none"
                         />
                         <span
                             className="absolute right-3 top-10 cursor-pointer text-gray-500"
@@ -92,7 +92,7 @@ const EditPassTab = ({ activeTab, onSubmitPassword, loading }) => {
                     </div>
 
                     <div className='w-full text-center'>
-                        <button type="submit" disabled={loading} className="disabled:cursor-not-allowed mt-4 px-8 bg-teal-500 hover:bg-teal-600 text-white py-2 rounded-xs cursor-pointer">
+                        <button type="submit" disabled={loading} className="disabled:cursor-not-allowed mt-4 px-8 bg-teal-500 hover:bg-teal-600 text-white py-2 rounded-xl cursor-pointer">
                             {
                                 loading ? <ImSpinner9 size={20} className="animate-spin" /> : 'Save Changes'
                             }

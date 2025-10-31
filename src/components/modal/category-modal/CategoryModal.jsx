@@ -43,7 +43,7 @@ const CategoryModal = ({
                     transition={{ duration: 0.1 }}
                 >
                     <motion.div
-                        className="bg-white text-[#333333] p-8 rounded-lg w-[500px] shadow-lg"
+                        className="bg-white text-[#333333] p-8 rounded-xl w-[500px] shadow-lg"
                         initial={{ scale: 0.8 }}
                         animate={{ scale: 1 }}
                         exit={{ scale: 0.8 }}
@@ -67,7 +67,7 @@ const CategoryModal = ({
                                 type="text"
                                 value={categoryName}
                                 onChange={(e) => setCategoryName(e.target.value)}
-                                className="w-full border border-[#00A89D] px-3 py-2 rounded outline-none"
+                                className="w-full border border-[#00A89D] px-3 py-1 rounded-lg outline-none"
                                 placeholder="Enter category name"
                                 disabled={isSubmitting} 
                             />
@@ -80,7 +80,7 @@ const CategoryModal = ({
                                 type="file"
                                 accept="image/*"
                                 onChange={handleIconUpload}
-                                className="w-full border border-[#00A89D] px-3 py-2 rounded outline-none cursor-pointer text-[15px] text-[#3333339b]"
+                                className="w-full border border-[#00A89D] px-3 py-1 rounded-lg outline-none cursor-pointer text-[15px] text-[#3333339b]"
                                 id="icon-upload"
                                 disabled={isSubmitting} 
                             />
@@ -92,7 +92,7 @@ const CategoryModal = ({
                                 />
                             )}
                             <FaRegImage
-                                className="absolute top-10 right-3"
+                                className="absolute top-9 right-3"
                                 size={20}
                                 color="#00A89D"
                             />
@@ -100,7 +100,7 @@ const CategoryModal = ({
 
                         <button
                             onClick={handleSubmit}
-                            className="bg-[#00A89D] text-white w-full py-2 rounded font-medium cursor-pointer flex items-center justify-center gap-2" // flex, items-center, justify-center, gap-2 যোগ করা হয়েছে
+                            className="bg-[#00A89D] text-white w-full py-1 rounded-lg font-medium cursor-pointer flex items-center justify-center gap-2" // flex, items-center, justify-center, gap-2 যোগ করা হয়েছে
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? (

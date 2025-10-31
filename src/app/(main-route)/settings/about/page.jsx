@@ -87,7 +87,7 @@ const AboutUs = () => {
                 <button
                     onClick={handleSubmit}
                     disabled={isSaving}
-                    className="px-8 bg-teal-500 hover:bg-teal-600 text-white py-2 rounded-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-8 bg-teal-500 hover:bg-teal-600 text-white py-2 rounded-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isSaving ? (
                         <div className="flex gap-2 items-center">

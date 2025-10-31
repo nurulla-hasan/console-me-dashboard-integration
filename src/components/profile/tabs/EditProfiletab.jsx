@@ -16,7 +16,7 @@ const EditProfiletab = ({activeTab, handleSubmit, onSubmitProfile, register, use
                             type="text"
                             placeholder={user?.name}
                             {...register('name')}
-                            className="w-full border border-teal-400 rounded-md p-2 outline-none placeholder:text-black"
+                            className="w-full border border-teal-400 rounded-xl p-2 outline-none placeholder:text-black"
                         />
                     </div>
 
@@ -27,7 +27,7 @@ const EditProfiletab = ({activeTab, handleSubmit, onSubmitProfile, register, use
                             placeholder={user?.email}
                             disabled 
                             {...register('email')}
-                            className="w-full border border-teal-400 rounded-md p-2 outline-none disabled:text-gray-400"
+                            className="w-full border border-teal-400 rounded-xl p-2 outline-none disabled:text-gray-400"
                         />
                     </div>
 
@@ -37,7 +37,7 @@ const EditProfiletab = ({activeTab, handleSubmit, onSubmitProfile, register, use
                             type="text"
                             placeholder={user?.phone}
                             {...register('phone')}
-                            className="w-full border border-teal-400 rounded-md p-2 outline-none placeholder:text-black"
+                            className="w-full border border-teal-400 rounded-xl p-2 outline-none placeholder:text-black"
                         />
                     </div>
 
@@ -47,12 +47,12 @@ const EditProfiletab = ({activeTab, handleSubmit, onSubmitProfile, register, use
                             type="text"
                             placeholder={user?.city}
                             {...register('city')}
-                            className="w-full border border-teal-400 rounded-md p-2 outline-none placeholder:text-black"
+                            className="w-full border border-teal-400 rounded-xl p-2 outline-none placeholder:text-black"
                         />
                     </div>
 
                     <div className='w-full text-center'>
-                        <button type="submit" disabled={loading} className="disabled:cursor-not-allowed mt-4 px-8 bg-teal-500 hover:bg-teal-600 text-white py-2 rounded-xs cursor-pointer">
+                        <button type="submit" disabled={loading} className="disabled:cursor-not-allowed mt-4 px-8 bg-teal-500 hover:bg-teal-600 text-white py-2 rounded-xl cursor-pointer">
                             {
                                 loading ? <ImSpinner9 size={20} className="animate-spin"/> : 'Save Changes'
                             }
