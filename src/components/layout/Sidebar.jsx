@@ -8,10 +8,8 @@ import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 
 const Sidebar = ({ isHideLayout, menuItems, setSettingsOpen, settingsOpen, settingMenu, pathname, }) => {
-
     const router = useRouter();
     const queryClient = useQueryClient();
-
     const handleLogout = () => {
         try {
             queryClient.invalidateQueries({ queryKey: ["me"] });
