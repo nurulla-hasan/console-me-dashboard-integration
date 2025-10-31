@@ -71,7 +71,7 @@ const Sidebar = ({ isHideLayout, menuItems, setSettingsOpen, settingsOpen, setti
                             <AnimatePresence initial={false}>
                                 {settingsOpen && (
                                     <motion.div
-                                        className="flex flex-col gap-1 font-medium mt-1 pr-5"
+                                        className="flex flex-col gap-1 font-medium mt-3 pr-5"
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: -10 }}
@@ -83,7 +83,7 @@ const Sidebar = ({ isHideLayout, menuItems, setSettingsOpen, settingsOpen, setti
                                                 <Link
                                                     key={item.label}
                                                     href={item.href}
-                                                    className={`px-4 py-2 text-lg rounded-xl transition-colors duration-200 ${isActive
+                                                    className={`px-4 py-1 text-lg rounded-xl transition-colors duration-200 ${isActive
                                                         ? "bg-[#058279] text-white"
                                                         : "text-[#00A89D] hover:bg-[#00A89D] bg-[#FEFEFE] hover:text-white"
                                                         }`}
@@ -99,7 +99,7 @@ const Sidebar = ({ isHideLayout, menuItems, setSettingsOpen, settingsOpen, setti
                     </nav>
                 </div>
 
-                <button onClick={handleLogout} className="text-[#00A89D] bg-[#FEFEFE] text-sm py-3 flex gap-2 pl-3 mx-2 items-center cursor-pointer">
+                <button onClick={handleLogout} className="text-[#00A89D] bg-[#FEFEFE] text-sm py-2 flex gap-2 pl-3 mx-2 items-center cursor-pointer rounded-xl">
                     <MdOutlineLogout size={20} />
                     <span className='text-md font-medium'>Log out</span>
                 </button>
