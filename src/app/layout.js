@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
                         showSpinner={false}
                     />
                     {children}
-                    <Toaster />
+                    <Toaster position='top-right'/>
                 </Provider>
             </body>
         </html>
